@@ -49,6 +49,8 @@
     - Pipeline: `plans/todo.md` -> `plans/arch/` design -> draft logic in `plans/features/` -> code -> update `docs/` -> check `[x]` in `todo.md` (re-link to `docs/`) -> archive plan.
   - **Agentic Evolution:**
     - Mandatory: After long sessions (>10 turns) or significant feedback loops, activate `agentic-evolution` to refine agents and skills based on lessons learned.
+  - **Tool Usage Mandates:**
+    - Always use `sequentialthinking` for initial research, architecture design, and complex problem-solving turns.
 - **GitHub Projects Syncing:**
 
   - Create issues for all tasks. Inject links to local `plans/` inside issue descriptions.

@@ -1,6 +1,6 @@
 ---
 name: backend
-description: Backend development expert for Python (FastAPI/Express) and Node.js.
+description: Backend development expert for Python (FastAPI) and Node.js (Express). Strictly uses uv for Python dependency management.
 ---
 
 # Backend Development Skill
@@ -8,7 +8,7 @@ description: Backend development expert for Python (FastAPI/Express) and Node.js
 This skill provides expert guidance for building robust and scalable backends.
 
 ## Frameworks
-- **FastAPI**: Preferred for Python (high performance, automatic OpenAPI).
+- **FastAPI**: Preferred for Python (high performance, automatic OpenAPI). Always use `uv` for setup.
 - **Express**: Standard for Node.js backends.
 
 ## API Design

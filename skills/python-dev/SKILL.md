@@ -1,6 +1,6 @@
 ---
 name: python-dev
-description: Expert guidance for Python application development, including dependency management (uv, poetry, pip), project structure, type hinting, and testing with pytest.
+description: Expert guidance for Python application development, strictly using uv for dependency management and project isolation. Focuses on src layout, ruff, and pytest.
 ---
 
 # Python Development Skill
@@ -10,7 +10,7 @@ This skill provides expert guidance for building robust, maintainable, and idiom
 ## Project Setup & Dependency Management
 
 ### Recommended Tools
-- **uv**: Preferred for lightning-fast package management and project isolation.
+- **uv**: MANDATORY for lightning-fast package management and project isolation. Never use pip/poetry unless explicitly requested.
 - **pytest**: Standard for testing.
 - **ruff**: Fast, comprehensive linting and formatting.
 - **mypy**: Static type checking.

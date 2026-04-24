@@ -3,22 +3,21 @@ name: debugger
 description: Systematic debugging workflows, root-cause analysis (RCA), and error tracing for Python and JavaScript.
 ---
 
-# Debugging & RCA Skill
+# Debugger Skill
 
-This skill provides procedural guidance for diagnosing and fixing software bugs.
+Systematic approach to finding and fixing bugs.
 
-## Debugging Workflow
-1. **Reproduce**: Confirm the bug with a minimal test case.
-2. **Trace**: Examine stack traces and execution logs.
-3. **Isolate**: Determine which component or layer is failing.
-4. **Fix**: Apply a surgical update.
-5. **Verify**: Run tests to confirm the fix and prevent regressions.
+## 1. Root-Cause Analysis (RCA)
+1. **Reproduce**: Minimal script or test case.
+2. **Isolate**: Check logs, stack traces, and environment variables.
+3. **Trace**: Follow data flow across boundaries (API, DB, Frontend).
+4. **Fix**: Surgical patch with regression test.
 
-## Tools & Techniques
-- **Logging**: Use structured logs for better traceability.
-- **Python (PDB)**: `breakpoint()` for interactive debugging.
-- **JavaScript (DevTools)**: Use `debugger;` statements and Chrome DevTools.
+## 2. Platform Specifics
+- **Python**: Use `pdb`, `icecream`, or `logging`. Check `pip list` vs `uv lock`.
+- **Node.js/JS**: Browser devtools, `console.trace()`, `node --inspect`.
 
-## Root-Cause Analysis (RCA)
-- Ask "Why" five times to reach the underlying issue.
-- Document the fix to prevent recurring failures.
+## Directives
+- NEVER suppress errors without handling.
+- Always check the "Happy Path" first.
+- If a fix fails > 3 times, re-evaluate architectural assumptions.

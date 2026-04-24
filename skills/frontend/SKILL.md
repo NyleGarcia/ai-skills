@@ -1,24 +1,24 @@
 ---
 name: frontend
-description: Frontend development guidelines for React and Angular using TypeScript and Vanilla CSS.
+description: Frontend development expert for React and Angular using TypeScript and Vanilla CSS. Includes UI/UX patterns from uiex.
 ---
 
 # Frontend Development Skill
 
-This skill provides expert guidance for building modern web frontends.
+Modern, responsive, and high-performance web applications.
 
-## Frameworks
-- **React**: Preferred with TypeScript and Functional Components (Hooks).
-- **Angular**: Use for large-scale enterprise applications.
+## Core Frameworks
+- **React**: Preferred with Vite and TypeScript.
+- **Angular**: Use for enterprise-scale applications.
+- **Vanilla CSS**: Primary choice for styling. Avoid Tailwind unless requested.
 
-## State Management
-- **Local State**: Use `useState` (React) or signals (Angular).
-- **Context/Services**: Use for shared state across components.
+## UI/UX Patterns (`uiex`)
+- **Spacing**: 8px base grid.
+- **Typography**: Modular scales, system-font stacks or curated pairings.
+- **Visuals**: Use Soft UI (subtle shadows) or Glassmorphism where appropriate.
+- **Interactions**: Add `cursor-pointer` to clickables. 150-300ms transitions.
 
-## Performance
-- **Lazy Loading**: Split bundles with dynamic imports.
-- **Memoization**: Use `useMemo` and `useCallback` to prevent unnecessary re-renders.
-
-## Testing
-- **Vitest/Jest**: Unit testing for components and logic.
-- **Testing Library**: Assert on user behavior rather than implementation details.
+## Verification
+- Accessibility (WCAG AA).
+- Mobile-first responsiveness.
+- Performance (Lighthouse score > 90).

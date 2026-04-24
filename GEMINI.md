@@ -41,12 +41,16 @@
 - `node-code-sandbox`: Spin up disposable Docker containers for JS execution.
 - `simplechecklist`: Task management with Docker-optimized SQLite persistence.
 
-## Project Management & Planning
-- **`plans/` vs `docs/` Lifecycle:** 
-  - `plans/` (WIP): Mutable directory for implementation drafting and `todo.md` tracking.
-  - `docs/` (Truth): Immutable reference of production state.
-  - Pipeline: `plans/todo.md` -> draft logic in `plans/features/` -> code -> update `docs/` -> check `[x]` in `todo.md` (re-link to `docs/`) -> archive plan.
+- **Project Management & Planning:**
+  - `plans/` vs `docs/` Lifecycle: 
+    - `plans/` (WIP): Mutable directory for implementation drafting and `todo.md` tracking.
+    - `plans/arch/` (Specs): Technical design, schemas, and architecture decisions for the current feature.
+    - `docs/` (Truth): Immutable reference of production state.
+    - Pipeline: `plans/todo.md` -> `plans/arch/` design -> draft logic in `plans/features/` -> code -> update `docs/` -> check `[x]` in `todo.md` (re-link to `docs/`) -> archive plan.
+  - **Agentic Evolution:**
+    - Mandatory: After long sessions (>10 turns) or significant feedback loops, activate `agentic-evolution` to refine agents and skills based on lessons learned.
 - **GitHub Projects Syncing:**
+
   - Create issues for all tasks. Inject links to local `plans/` inside issue descriptions.
   - Vigorously manage project board state via `gh` CLI (`gh project item-add`, `gh project item-edit`). 
   - Board statuses must perfectly reflect branch activity/reality.

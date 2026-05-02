@@ -23,6 +23,8 @@ description: Create new agent skills with proper structure, progressive disclosu
    - Anything missing or unclear?
    - Should any section be more/less detailed?
 
+4. **Index Sync** - Update `GEMINI.md`, `TOOLKIT.md`, and `skills/README.md` to include the new skill in the appropriate category.
+
 ## Skill Structure
 
 ```

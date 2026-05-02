@@ -27,6 +27,7 @@ Refine agent personas and skill guides based on empirical usage and feedback.
 *   **Trigger Precision**: Refine `description` in frontmatter if the skill triggers too often or too little.
 *   **Resource Mapping**: Link new `references/` or `scripts/` added during development.
 *   **Brevity Audit**: Remove redundant explanations to save tokens.
+*   **Caveman Check**: Ensure skill instructions are compatible with `caveman ultra` intensity (terse, high-signal).
 
 ## Verification
 *   Verify that YAML frontmatter remains valid.

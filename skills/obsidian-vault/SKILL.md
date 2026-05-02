@@ -7,7 +7,9 @@ description: Search, create, and manage notes in the Obsidian vault with wikilin
 
 ## Vault location
 
-`/mnt/d/Obsidian Vault/AI Research/`
+- **Darwin (Mac)**: `~/Documents/Obsidian Vault/AI Research/` (Verify if exists)
+- **Windows (WSL)**: `/mnt/d/Obsidian Vault/AI Research/`
+- **Default**: Search for `AI Research` folder if not found.
 
 Mostly flat at root level.
 

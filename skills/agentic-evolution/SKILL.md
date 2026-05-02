@@ -32,3 +32,4 @@ Refine agent personas and skill guides based on empirical usage and feedback.
 *   Verify that YAML frontmatter remains valid.
 *   Ensure the description is a single-line string.
 *   Check that agent `tools` lists are correctly formatted.
+*   **Sync Audit**: After adding or renaming a skill, update `GEMINI.md`, `TOOLKIT.md`, and `skills/README.md`.

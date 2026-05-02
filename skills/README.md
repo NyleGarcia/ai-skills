@@ -1,16 +1,24 @@
-# ADK Skills
+# Agentic Skills & Agents Toolkit
 
-Development skills for building agents with [Google ADK](https://adk.dev). Install into any coding agent via [`npx skills`](https://github.com/vercel-labs/skills).
+Master index of all agentic skills loaded in this environment.
 
+## Quick Index
 
-## Skills
+| Category | Skills |
+|----------|--------|
+| **Core Engineering** | `agentic-core`, `agentic-evolution`, `debugger`, `tdd`, `qa`, `security-specialist`, `playwright-e2e` |
+| **Workflow** | `project-management`, `superpowers`, `github-triage`, `pr-reviewer`, `cicd-k8s-docker`, `setup-pre-commit` |
+| **Productivity** | `caveman`, `technical-writing`, `obsidian-vault`, `zoom-out`, `write-a-skill`, `edit-article` |
+| **Frontend/UI** | `uiux-pro`, `web-assets`, `web-quality`, `frontend` |
+| **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
+| **Google ADK** | `google-agents-cli-*` |
+| **Methodologies** | `design-an-interface`, `domain-model`, `grill-me`, `js-style-guide`, etc. |
 
-| Skill | Description |
-|-------|-------------|
-| `google-agents-cli-workflow` | Development lifecycle, code preservation rules, model selection |
-| `google-agents-cli-adk-code` | Python API reference — agents, tools, orchestration, callbacks, state |
-| `google-agents-cli-scaffold` | Project scaffolding via Agents CLI |
-| `google-agents-cli-eval` | Evaluation methodology — metrics, evalsets, LLM-as-judge, trajectory scoring |
-| `google-agents-cli-deploy` | Deployment — Agent Runtime, Cloud Run, CI/CD, secrets |
-| `google-agents-cli-publish` | Gemini Enterprise registration |
-| `google-agents-cli-observability` | Observability — Cloud Trace, Cloud Logging, third-party integrations |
+## Detailed Manual
+See [TOOLKIT.md](./TOOLKIT.md) for detailed descriptions and combined workflows.
+
+## Development
+To add a new skill, use the `write-a-skill` skill:
+1. Create a directory `skills/my-new-skill`.
+2. Add `SKILL.md` with YAML frontmatter.
+3. Update `GEMINI.md` and `TOOLKIT.md`.

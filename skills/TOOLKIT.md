@@ -2,32 +2,50 @@
 
 Master index of all agentic skills loaded in this environment.
 
-## 🏗️ Orchestration & Planning
-- **`project-management`**: End-to-end SDLC. Merges `sdlc-delivery`, `github-planner`, `github-project`, and `planning-with-files`.
-- **`superpowers`**: Swiss army knife. Brainstorming, TDD enforcement, execution planning.
-- **`agentic-core`**: Deep refactoring, dependency mgmt, TDD, systematic debugging.
-- **`agentic-evolution`**: Periodic meta-refinement of agents/skills based on history.
+## 🏗️ Core Engineering & Quality
+- **`agentic-core`**: TDD, refactoring, dependency mgmt, and CLI troubleshooting.
+- **`agentic-evolution`**: Meta-refinement of agents/skills based on history.
+- **`debugger`**: Systematic debugging and error tracing.
+- **`tdd`**: Test-driven development workflows.
+- **`qa`**: Conversational QA and issue filing.
+- **`security-specialist`**: Auditing (static/active) and pre-ship hardening.
+- **`playwright-e2e`**: Automated browser testing.
+- **`web-quality`**: Lighthouse optimization (CWV, Performance, SEO).
 
-## 🎨 UI/UX & Web Quality
-- **`uiux-pro`**: Advanced design system generator. Fights LLM generic bias.
-- **`web-quality`**: Lighthouse optimization (CWV, SEO, a11y, Performance).
-- **`web-assets`**: Generates OG tags, PWA manifests, favicons.
-- **`uiex`**: Design system and UI/UX patterns (Vanilla CSS).
+## 🚀 Workflow & Orchestration
+- **`project-management`**: End-to-end SDLC, GitHub Projects sync, and `todo.md`.
+- **`superpowers`**: Execution planning and TDD enforcement.
+- **`github-triage`**: Label-based issue state machine.
+- **`pr-reviewer`**: CLI-based PR reviews.
+- **`cicd-k8s-docker`**: Docker, K8s, and CI/CD pipelines.
+- **`setup-pre-commit`**: Husky and lint-staged configuration.
+- **`git-guardrails-claude-code`**: Blocking dangerous git commands.
 
-## 🛡️ Security & Testing
-- **`security-specialist`**: Comprehensive auditing. Merges `security-qa` (static) and `security-fuzzer` (active).
-- **`playwright-e2e`**: Automated DOM interaction and e2e browser testing.
-
-## 🤖 Knowledge & Writing
-- **`technical-writing`**: Knowledge engine. Merges `skill-seekers` (skill gen) and `tapestry` (knowledge graphs).
-- **`pr-reviewer`**: Automated, rigorous GitHub PR reviews via CLI.
-
-## 🛠️ Specialized
-- **`python-dev`**: Expert Python guidance (strictly using `uv`).
-- **`backend`**: FastAPI/Express backend expert.
-- **`frontend`**: React/Angular frontend expert.
-- **`discord-bot`**: Rapid scaffolding for discord.py bots.
+## ⚡ Productivity & Efficiency
 - **`caveman`**: Token efficiency engine. Merges `caveman-commit`, `caveman-review`, and `caveman-compress`.
+- **`technical-writing`**: Knowledge engine and skill generation.
+- **`obsidian-vault`**: Note management and wikilinks.
+- **`zoom-out`**: High-level perspective and context gathering.
+- **`write-a-skill`**: Creating/updating agent skills.
+- **`edit-article`**: Structural editing and prose tightening.
+
+## 🎨 Frontend & UI/UX
+- **`uiux-pro`**: Advanced design systems and UI/UX patterns.
+- **`web-assets`**: OG tags, PWA manifests, favicons.
+- **`frontend`**: React/Angular frontend development.
+
+## 💾 Backend & Data
+- **`backend`**: FastAPI/Express API development.
+- **`python-dev`**: Expert Python guidance (strictly using `uv`).
+- **`discord-bot`**: Rapid scaffolding for discord.py bots.
+- **`alloydb-basics`, `bigquery-basics`, `cloud-run-basics`, `cloud-sql-basics`, `firebase-basics`, `gemini-api`, `gke-basics`**: Google Cloud fundamentals.
+
+## ☁️ Google Cloud Expert & Agents
+- **`google-cloud-networking-observability`, `google-cloud-recipe-auth`, `google-cloud-recipe-onboarding`, `google-cloud-waf-cost-optimization`, `google-cloud-waf-reliability`, `google-cloud-waf-security`**: Advanced GCP recipes.
+- **`google-agents-cli-*`**: Full lifecycle for Google ADK agents (scaffold, adk-code, eval, deploy, publish, observability, workflow).
+
+## 🧠 Methodologies
+- **`design-an-interface`, `domain-model`, `grill-me`, `improve-codebase-architecture`, `js-style-guide`, `migrate-to-shoehorn`, `request-refactor-plan`, `scaffold-exercises`, `to-issues`, `to-prd`, `triage-issue`, `ubiquitous-language`**: Specialized software design and process skills.
 
 ## 🚀 How to Combine
 1. `technical-writing` to ingest new tech.

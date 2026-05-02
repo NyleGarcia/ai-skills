@@ -28,6 +28,9 @@
 - `github-project`: Workflow for managing GitHub Projects (V2), creating/linking items, and updating statuses via the gh CLI and issue management.
 - `mux-workstream-manager`: Generate WORKSTREAMS.md files for gemini-mux to orchestrate multi-branch development.
 - `planner-architect`: Workflow for system design, architecture planning, weighing options, creating implementation plans, and managing documentation.
+- **Google Cloud**: `alloydb-basics`, `bigquery-basics`, `cloud-run-basics`, `cloud-sql-basics`, `firebase-basics`, `gemini-api`, `gke-basics`, `google-cloud-*`.
+- **Google Agents CLI**: `google-agents-cli-*` (adk-code, deploy, eval, observability, publish, scaffold, workflow).
+- **Matt Pocock Skills**: `design-an-interface`, `domain-model`, `edit-article`, `git-guardrails-claude-code`, `github-triage`, `grill-me`, `improve-codebase-architecture`, `migrate-to-shoehorn`, `obsidian-vault`, `qa`, `request-refactor-plan`, `scaffold-exercises`, `setup-pre-commit`, `tdd`, `to-issues`, `to-prd`, `triage-issue`, `ubiquitous-language`, `write-a-skill`, `zoom-out`.
 
 ### Commands
 - `/security-review`: Run a security-focused code review on git diff.

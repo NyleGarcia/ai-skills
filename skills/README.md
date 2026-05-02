@@ -9,7 +9,7 @@ Master index of all agentic skills loaded in this environment.
 | **Core Engineering** | `agentic-core`, `agentic-evolution`, `debugger`, `tdd`, `qa`, `security-specialist`, `playwright-e2e` |
 | **Workflow** | `project-management`, `superpowers`, `github-triage`, `pr-reviewer`, `cicd-k8s-docker`, `setup-pre-commit` |
 | **Productivity** | `caveman`, `technical-writing`, `obsidian-vault`, `zoom-out`, `write-a-skill`, `edit-article` |
-| **Frontend/UI** | `uiux-pro`, `web-assets`, `web-quality`, `frontend` |
+| **Frontend/UI** | `uiux-pro`, `web-assets`, `web-quality`, `frontend`, `humanize-ui` |
 | **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
 | **Google ADK** | `google-agents-cli-*` |
 | **Methodologies** | `design-an-interface`, `domain-model`, `grill-me`, `js-style-guide`, etc. |

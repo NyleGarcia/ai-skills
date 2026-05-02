@@ -10,6 +10,7 @@
 - Prefer `uv init`, `uv add`, and `uv run` for all Python-related tasks.
 
 ## Skills & MCPs
+- **Core Directive**: Always use skills and agents where possible.
 
 ### Core Engineering & Quality
 - `agentic-core`: TDD, refactoring, dependency mgmt, and CLI troubleshooting.
@@ -42,6 +43,7 @@
 - `uiux-pro`: Advanced design systems and UI/UX patterns.
 - `web-assets`: OG tags, PWA manifests, favicons.
 - `frontend`: React/Angular frontend development.
+- `humanize-ui`: Strip away the "AI-made" feel from web apps to make them look custom, professional, and trustworthy.
 
 ### Backend & Data
 - `backend`: FastAPI/Express API development.

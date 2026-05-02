@@ -33,6 +33,7 @@ Master index of all agentic skills loaded in this environment.
 - **`uiux-pro`**: Advanced design systems and UI/UX patterns.
 - **`web-assets`**: OG tags, PWA manifests, favicons.
 - **`frontend`**: React/Angular frontend development.
+- **`humanize-ui`**: Strip away the "AI-made" feel from web apps to make them look custom, professional, and trustworthy.
 
 ## 💾 Backend & Data
 - **`backend`**: FastAPI/Express API development.

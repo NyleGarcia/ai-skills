@@ -16,6 +16,11 @@ TARGETS=(
     "$HOME/.gemini/skills skills"
     "$HOME/.gemini/agents agents"
     "$HOME/.gemini/commands commands"
+    "$HOME/.gemini/GEMINI.md GEMINI.md"
+    "$HOME/.gemini/antigravity/skills skills"
+    "$HOME/.gemini/antigravity/agents agents"
+    "$HOME/.gemini/antigravity/GEMINI.md GEMINI.md"
+    "$HOME/.gemini/antigravity/commands commands"
     "$HOME/.claude/skills skills"
     "$HOME/.claude/agents agents"
     "$HOME/.claude/commands commands"
@@ -56,17 +61,28 @@ for item in "${TARGETS[@]}"; do
     target_dir=$(dirname "$target")
     repo_source="$REPO_DIR/$type"
     
-    mkdir -p "$target_dir"
+    if [ ! -d "$target_dir" ]; then
+        echo "Skipping $target (directory $target_dir does not exist)"
+        continue
+    fi
     
-    if [ -d "$target" ] && [ ! -L "$target" ]; then
-        echo "Backing up existing directory: $target"
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+        echo "Backing up existing path: $target"
         backup_path="$BACKUP_DIR/$(basename "${target//\//_}")"
-        mkdir -p "$backup_path"
-        cp -rp "$target"/. "$backup_path/" 2>/dev/null || true
-        
-        # Copy user content to the repo directory BEFORE symlinking
-        echo "Merging $target into $repo_source..."
-        cp -rp "$target"/. "$repo_source/" 2>/dev/null || true
+        if [ -d "$target" ]; then
+            mkdir -p "$backup_path"
+            cp -rp "$target"/. "$backup_path/" 2>/dev/null || true
+            
+            # Copy user content to the repo directory BEFORE symlinking
+            echo "Merging directory $target into $repo_source..."
+            cp -rp "$target"/. "$repo_source/" 2>/dev/null || true
+        else
+            cp -p "$target" "$backup_path" 2>/dev/null || true
+            
+            # Copy user content to the repo directory BEFORE symlinking
+            echo "Merging file $target into $repo_source..."
+            cp -p "$target" "$repo_source" 2>/dev/null || true
+        fi
         
         rm -rf "$target"
     elif [ -L "$target" ]; then

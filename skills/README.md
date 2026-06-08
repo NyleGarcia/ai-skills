@@ -6,13 +6,17 @@ Master index of all agentic skills loaded in this environment.
 
 | Category | Skills |
 |----------|--------|
-| **Core Engineering** | `agentic-core`, `agentic-evolution`, `debugger`, `tdd`, `qa`, `security-specialist`, `playwright-e2e` |
-| **Workflow** | `project-management`, `superpowers`, `github-triage`, `pr-reviewer`, `cicd-k8s-docker`, `setup-pre-commit` |
-| **Productivity** | `caveman`, `technical-writing`, `obsidian-vault`, `zoom-out`, `write-a-skill`, `edit-article` |
-| **Frontend/UI** | `uiux-pro`, `web-assets`, `web-quality`, `frontend`, `humanize-ui` |
+| **Meta** | `using-agent-skills` |
+| **Define** | `interview-me`, `idea-refine`, `spec-driven-development`, `to-prd` |
+| **Plan** | `planning-and-task-breakdown`, `planner-architect`, `project-management`, `to-issues` |
+| **Build** | `incremental-implementation`, `context-engineering`, `source-driven-development`, `doubt-driven-development`, `frontend-ui-engineering`, `test-driven-development`, `tdd`, `api-and-interface-design`, `design-an-interface` |
+| **Verify** | `browser-testing-with-devtools`, `debugging-and-error-recovery`, `debugger`, `playwright-e2e`, `qa` |
+| **Review** | `code-review-and-quality`, `code-simplification`, `security-and-hardening`, `security-specialist`, `performance-optimization`, `pr-reviewer`, `web-quality` |
+| **Ship** | `git-workflow-and-versioning`, `ci-cd-and-automation`, `cicd-k8s-docker`, `deprecation-and-migration`, `documentation-and-adrs`, `domain-model`, `shipping-and-launch`, `web-assets` |
+| **Meta-Evolution**| `agentic-evolution`, `write-a-skill`, `technical-writing` |
+| **Productivity** | `caveman`, `obsidian-vault`, `zoom-out`, `edit-article` |
 | **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
-| **Google ADK** | `google-agents-cli-*` |
-| **Methodologies** | `design-an-interface`, `domain-model`, `grill-me`, `js-style-guide`, etc. |
+| **Methodologies** | `grill-me`, `js-style-guide`, `migrate-to-shoehorn`, `request-refactor-plan`, `scaffold-exercises`, `triage-issue`, `ubiquitous-language` |
 
 ## Detailed Manual
 See [TOOLKIT.md](./TOOLKIT.md) for detailed descriptions and combined workflows.

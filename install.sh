@@ -11,15 +11,19 @@ COMMANDS_DIR="$REPO_DIR/commands"
 BACKUP_DIR="$HOME/.ai-skills.backup.$(date +%Y%m%d_%H%M%S)"
 
 # Target directories to symlink
-# Format: <target_path> <type: skills|agents|commands>
+# Format: <target_path> <type: skills|agents|commands|plugin>
 TARGETS=(
+    "$HOME/.gemini/config/skills skills"
+    "$HOME/.gemini/config/agents agents"
+    "$HOME/.gemini/config/commands commands"
+    "$HOME/.gemini/config/rules/GEMINI.md rules/GEMINI.md"
     "$HOME/.gemini/skills skills"
     "$HOME/.gemini/agents agents"
     "$HOME/.gemini/commands commands"
-    "$HOME/.gemini/GEMINI.md GEMINI.md"
+    "$HOME/.gemini/rules/GEMINI.md rules/GEMINI.md"
     "$HOME/.gemini/antigravity/skills skills"
     "$HOME/.gemini/antigravity/agents agents"
-    "$HOME/.gemini/antigravity/GEMINI.md GEMINI.md"
+    "$HOME/.gemini/antigravity/rules/GEMINI.md rules/GEMINI.md"
     "$HOME/.gemini/antigravity/commands commands"
     "$HOME/.claude/skills skills"
     "$HOME/.claude/agents agents"
@@ -61,9 +65,12 @@ for item in "${TARGETS[@]}"; do
     target_dir=$(dirname "$target")
     repo_source="$REPO_DIR/$type"
     
+    if [[ "$type" != *.* ]] && [ ! -d "$repo_source" ]; then
+        mkdir -p "$repo_source"
+    fi
+    
     if [ ! -d "$target_dir" ]; then
-        echo "Skipping $target (directory $target_dir does not exist)"
-        continue
+        mkdir -p "$target_dir"
     fi
     
     if [ -e "$target" ] && [ ! -L "$target" ]; then
@@ -94,6 +101,28 @@ for item in "${TARGETS[@]}"; do
     ln -s "$repo_source" "$target"
 done
 
+# 3. Setup Plugin Symlinks
+mkdir -p "$HOME/.gemini/config/plugins"
+if [ -d "$REPO_DIR/plugins" ]; then
+    for plugin_dir in "$REPO_DIR"/plugins/*; do
+        if [ -d "$plugin_dir" ]; then
+            plugin_name=$(basename "$plugin_dir")
+            target="$HOME/.gemini/config/plugins/$plugin_name"
+            
+            if [ -L "$target" ]; then
+                echo "Updating plugin symlink: $target"
+                rm "$target"
+            elif [ -e "$target" ]; then
+                echo "Warning: $target exists and is not a symlink. Skipping."
+                continue
+            fi
+            
+            echo "Creating plugin symlink: $target -> $plugin_dir"
+            ln -s "$plugin_dir" "$target"
+        fi
+    done
+fi
+
 # Clean up empty backup dir if nothing was backed up
 if [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
     rmdir "$BACKUP_DIR"
@@ -101,4 +130,51 @@ else
     echo "Backups created in: $BACKUP_DIR"
 fi
 
-echo "ai-skills installation complete."
+# 4. Verification Checks
+echo "Verifying installation..."
+errors=0
+
+# Verify TARGETS symlinks
+for item in "${TARGETS[@]}"; do
+    read -r target type <<< "$item"
+    if [ ! -L "$target" ]; then
+        echo "Error: Symlink target does not exist or is not a symlink: $target"
+        errors=$((errors + 1))
+    elif [ ! -e "$target" ]; then
+        echo "Error: Broken symlink at: $target -> $(readlink "$target")"
+        errors=$((errors + 1))
+    else
+        echo "Valid: $target -> $(readlink "$target")"
+    fi
+done
+
+# Verify plugins symlinks
+if [ -d "$REPO_DIR/plugins" ]; then
+    for plugin_dir in "$REPO_DIR"/plugins/*; do
+        if [ -d "$plugin_dir" ]; then
+            plugin_name=$(basename "$plugin_dir")
+            target="$HOME/.gemini/config/plugins/$plugin_name"
+            if [ ! -L "$target" ]; then
+                echo "Error: Plugin symlink does not exist or is not a symlink: $target"
+                errors=$((errors + 1))
+            elif [ ! -e "$target" ]; then
+                echo "Error: Broken plugin symlink at: $target -> $(readlink "$target")"
+                errors=$((errors + 1))
+            else
+                echo "Valid plugin: $target -> $(readlink "$target")"
+            fi
+        fi
+    done
+fi
+
+if [ $errors -eq 0 ]; then
+    echo "--------------------------------------------------"
+    echo "SUCCESS: All verification checks passed!"
+    echo "--------------------------------------------------"
+    echo "ai-skills installation complete."
+else
+    echo "--------------------------------------------------"
+    echo "FAILURE: $errors installation verification error(s) found!"
+    echo "--------------------------------------------------"
+    exit 1
+fi

@@ -38,12 +38,10 @@ Cloud SQL handles backups, high availability, and secure connectivity for relati
 - **`incremental-implementation`**: Delivers changes incrementally. Use when implementing any feature or change that touches more than one file. Use when you're about to write a large amount of code at once, or when a task feels too big to land in one step.
 - **`python-dev`**: Expert guidance for Python application development, strictly using uv for dependency management and project isolation. Focuses on src layout, ruff, and pytest.
 - **`source-driven-development`**: Grounds every implementation decision in official documentation. Use when you want authoritative, source-cited code free from outdated patterns. Use when building with any framework or library where correctness matters.
-- **`tdd`**: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
 - **`test-driven-development`**: Drives development with tests. Use when implementing any logic, fixing any bug, or changing any behavior. Use when you need to prove that code works, when a bug report arrives, or when you're about to modify existing functionality.
 
 ## Verify
 - **`browser-testing-with-devtools`**: Tests in real browsers via Chrome DevTools MCP. Use when building or debugging anything that runs in a browser. Use when you need to inspect the DOM, capture console errors, analyze network requests, profile performance, or verify visual output with real runtime data. Requires the chrome-devtools MCP server to be configured.
-- **`debugger`**: Systematic debugging workflows, root-cause analysis (RCA), and error tracing for Python and JavaScript.
 - **`debugging-and-error-recovery`**: Guides systematic root-cause debugging. Use when tests fail, builds break, behavior doesn't match expectations, or you encounter any unexpected error. Use when you need a systematic approach to finding and fixing the root cause rather than guessing.
 - **`playwright-e2e`**: Automates web app testing. Claude can test your UI flows end-to-end.
 - **`qa`**: Interactive QA session where user reports bugs or issues conversationally, and the agent files GitHub issues. Explores the codebase in the background for context and domain language. Use when user wants to report bugs, do QA, file issues conversationally, or mentions "QA session".

@@ -123,6 +123,22 @@ if [ -d "$REPO_DIR/plugins" ]; then
     done
 fi
 
+# 4. Setup Claude Code Plugin Marketplace
+if command -v claude >/dev/null 2>&1 && [ -f "$REPO_DIR/.claude-plugin/marketplace.json" ]; then
+    echo "Registering ai-skills as a Claude Code marketplace..."
+    claude plugin marketplace add "$REPO_DIR" >/dev/null 2>&1 || claude plugin marketplace update ai-skills >/dev/null 2>&1
+
+    for plugin_dir in "$REPO_DIR"/plugins/*; do
+        if [ -d "$plugin_dir" ]; then
+            plugin_name=$(basename "$plugin_dir")
+            echo "Installing Claude Code plugin: $plugin_name@ai-skills"
+            claude plugin install "$plugin_name@ai-skills" >/dev/null 2>&1
+        fi
+    done
+else
+    echo "Skipping Claude Code plugin marketplace setup (claude CLI not found or marketplace.json missing)."
+fi
+
 # Clean up empty backup dir if nothing was backed up
 if [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
     rmdir "$BACKUP_DIR"
@@ -130,7 +146,7 @@ else
     echo "Backups created in: $BACKUP_DIR"
 fi
 
-# 4. Verification Checks
+# 5. Verification Checks
 echo "Verifying installation..."
 errors=0
 

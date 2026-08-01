@@ -37,7 +37,7 @@ Before writing any code, invoke the `/grill-me` mindset:
 
 ### Phase 1.5: Escalation Assessment (Auto-Trigger Check)
 
-Before executing each task, evaluate it against the escalation triggers below. If **any** trigger fires, **do not attempt solo execution** — immediately delegate to a `teamwork-preview` multi-agent pipeline.
+Before executing each task, evaluate it against the escalation triggers below. If **any** trigger fires, **do not attempt solo execution** — immediately delegate to a multi-agent pipeline using whichever mechanism the current runtime provides (see Runtime Detection).
 
 #### Auto-Escalation Triggers
 
@@ -49,11 +49,23 @@ Before executing each task, evaluate it against the escalation triggers below. I
 | **Repeated failure** | Same task failed 3+ times with different fixes | Ralph is stuck; escalate rather than spiral |
 | **Explicit user flag** | Task description contains `[teamwork]` or `--delegate` flag | User pre-authorized delegation |
 
+#### Runtime Detection
+
+The pipeline always has four roles — **Explorer** (map the affected code/interfaces), **Worker** (implement, running a local ralph-loop to self-correct), **Reviewer** (code quality/architecture pass), **Auditor** (independent verification that tests actually cover the change and build/lint/tests are green) — but which primitive fills them depends on what's available in the current session:
+
+| Runtime | Delegation mechanism | Role mapping |
+|---|---|---|
+| Gemini CLI, `teamwork-preview` extension available | `teamwork_preview` subagent via `invoke_subagent` | Explorer, Worker, Reviewer, Auditor subagents native to teamwork-preview |
+| Claude Code, `Agent`/Task tool available | Native `Agent` tool spawning specialized subagents | `Explore` → Explorer · yourself (or `general-purpose`) running Phase 2 as a local ralph-loop → Worker · `core-workflow:code-reviewer` → Reviewer · `core-workflow:test-engineer` → Auditor |
+| Neither available | No multi-agent primitive — stay solo, but checkpoint harder | Lower the repeated-failure threshold to 2 and log progress every iteration instead of delegating |
+
+Detect the runtime once at Phase 1.5 (check for the `invoke_subagent`/`teamwork_preview` tool vs. an `Agent`/Task tool in the current toolset) and reuse that choice for the rest of the loop rather than re-checking per task.
+
 #### Escalation Protocol
 
 1. Log the trigger in `plans/now/ralph_progress.md`: `ESCALATED: <task> — reason: <trigger>`
-2. Craft a focused teamwork prompt from the task spec in `plans/specs/`.
-3. Invoke `teamwork_preview` subagent via `invoke_subagent` with the prompt.
+2. Craft a focused delegation prompt from the task spec in `plans/specs/`, framed around the four roles above.
+3. Dispatch via the mechanism identified in Runtime Detection.
 4. Wait for result. On success: mark task `[x]` in `plans/now/todo.md` and continue Phase 2.
 5. On failure: tighten acceptance criteria and re-escalate once before surfacing to user.
 
@@ -68,7 +80,7 @@ For each iteration (up to a reasonable limit, default 15 per task):
     - If the verification **succeeds** (e.g., exit code 0) and matches the completion promise: Update production truth in `docs/`, check `[x]` in `plans/now/todo.md` (re-linking to `docs/`), update the `gh` project board status, log success in `plans/now/ralph_progress.md`, and REPEAT Phase 2 to pick up the next task.
     - If the verification **fails**: Document the failure in `plans/now/ralph_progress.md`. Formulate a hypothesis for why it failed, apply a fix, and REPEAT Phase 2 for the same task.
 5. **Keep Going**: Do **NOT** stop to ask the user for help. Keep executing tool calls (like `run_command` and `replace_file_content`) back-to-back until verification succeeds. 
-6. **Multi-Agent Delegation**: See **Phase 1.5** for formal escalation triggers. Any task that hits a trigger is auto-escalated to `teamwork-preview` — do not attempt solo execution past the threshold.
+6. **Multi-Agent Delegation**: See **Phase 1.5** for formal escalation triggers and the Runtime Detection table. Any task that hits a trigger is auto-escalated to whichever multi-agent mechanism the current runtime provides — do not attempt solo execution past the threshold.
 
 
 ### Phase 3: Completion

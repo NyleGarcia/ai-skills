@@ -443,7 +443,7 @@ then verifies the test passes.
 
 This separation ensures the test is written without knowledge of the fix, making it more robust.
 
-Additionally, if a task is too complex or spans multiple files, you can delegate the implementation and verification phases to a multi-agent `teamwork-preview` pipeline (spawning Explorer, Worker, Reviewer, and Auditor subagents). During the implementation phase within this pipeline, the Worker subagent should run a local `ralph-loop` (an autonomous, self-correcting development loop executing tests, lint, and build) to iterate on failures and fix errors autonomously before delivering the handoff.
+Additionally, if a task is too complex or spans multiple files, you can delegate the implementation and verification phases to a multi-agent pipeline (Explorer, Worker, Reviewer, Auditor roles). Which primitive fills those roles depends on the runtime — Gemini CLI's `teamwork-preview` subagents, or Claude Code's native `Agent` tool spawning `Explore`/`core-workflow:code-reviewer`/`core-workflow:test-engineer` — see the `ralph-loop` skill's Runtime Detection table for the full mapping. During the implementation phase within this pipeline, the Worker should run a local `ralph-loop` (an autonomous, self-correcting development loop executing tests, lint, and build) to iterate on failures and fix errors autonomously before delivering the handoff.
 
 
 ## See Also

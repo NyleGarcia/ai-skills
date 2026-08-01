@@ -1,0 +1,52 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-skills",
+  "owner": {
+    "name": "Nyle Garcia"
+  },
+  "metadata": {
+    "description": "Personal collection of Claude Code plugins for architecture, backend, frontend/web, security, cloud, and workflow skills."
+  },
+  "plugins": [
+    {
+      "name": "architecture",
+      "source": "./plugins/architecture",
+      "description": "System design, interface boundaries, and domain modeling skills"
+    },
+    {
+      "name": "backend-dev",
+      "source": "./plugins/backend-dev",
+      "description": "Backend development workflows for Python and Node"
+    },
+    {
+      "name": "core-workflow",
+      "source": "./plugins/core-workflow",
+      "description": "Foundational software engineering practices, lifecycle management, and planning skills"
+    },
+    {
+      "name": "google-agents-adk",
+      "source": "./plugins/google-agents-adk",
+      "description": "Google Agents ADK CLI workflow and lifecycle skills"
+    },
+    {
+      "name": "google-cloud",
+      "source": "./plugins/google-cloud",
+      "description": "Google Cloud infrastructure, networking, and WAF skills"
+    },
+    {
+      "name": "ideation",
+      "source": "./plugins/ideation",
+      "description": "Conversational skills used to brainstorm and refine ideas"
+    },
+    {
+      "name": "security",
+      "source": "./plugins/security",
+      "description": "Security analysis and hardening workflows"
+    },
+    {
+      "name": "web-dev",
+      "source": "./plugins/web-dev",
+      "description": "Frontend, UI/UX, and Web Quality agent skills"
+    }
+  ]
+}

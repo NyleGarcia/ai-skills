@@ -13,7 +13,7 @@ Master index of all agentic skills loaded in this environment.
 | **Verify** | `browser-testing-with-devtools`, `debugging-and-error-recovery`, `playwright-e2e`, `qa` |
 | **Review** | `code-review-and-quality`, `code-simplification`, `security-and-hardening`, `security-specialist`, `performance-optimization`, `pr-reviewer`, `web-quality` |
 | **Ship** | `git-workflow-and-versioning`, `ci-cd-and-automation`, `cicd-k8s-docker`, `deprecation-and-migration`, `documentation-and-adrs`, `domain-model`, `shipping-and-launch`, `web-assets` |
-| **Meta-Evolution**| `agentic-evolution`, `write-a-skill`, `technical-writing` |
+| **Meta-Evolution**| `agentic-evolution`, `write-a-skill`, `technical-writing`, `subagent-orchestration` |
 | **Productivity** | `caveman`, `obsidian-vault`, `zoom-out`, `edit-article` |
 | **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
 | **Methodologies** | `grill-me`, `js-style-guide`, `migrate-to-shoehorn`, `request-refactor-plan`, `scaffold-exercises`, `triage-issue`, `ubiquitous-language` |

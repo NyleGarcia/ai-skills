@@ -2,10 +2,11 @@
 import os
 import sys
 
-# Define target paths
+# Define target paths relative to the repo root so the scan works from any checkout
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TARGET_DIRS = [
-    "/Users/nylegarcia/git/ai-skills/skills",
-    "/Users/nylegarcia/git/ai-skills/plugins"
+    os.path.join(REPO_ROOT, "skills"),
+    os.path.join(REPO_ROOT, "plugins")
 ]
 
 # Prompt injection / prompt poisoning keywords/phrases
@@ -49,7 +50,8 @@ def main():
     
     print("Starting Skill Security & Prompt Poisoning Scan...")
     print(f"Target directories: {', '.join(TARGET_DIRS)}")
-    print(f"Scanning for keywords: {', '.join(f'\"{kw}\"' for kw in KEYWORDS)}")
+    keyword_list = ', '.join('"{}"'.format(kw) for kw in KEYWORDS)
+    print(f"Scanning for keywords: {keyword_list}")
     print("-" * 60)
     
     for base_dir in TARGET_DIRS:

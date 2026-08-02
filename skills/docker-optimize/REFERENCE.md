@@ -8,14 +8,24 @@ Detailed techniques and per-language multi-stage templates. Load only when rewri
 
 | Choice | Typical size | Trade-off |
 |---|---|---|
-| `ubuntu` / full `node`, `python` | 400 MB–1 GB+ | Everything works; huge |
-| `*-slim` (Debian slim) | 60–250 MB | glibc, apt available; good default |
-| `*-alpine` | 5–80 MB | musl libc — native modules / wheels can break |
-| `gcr.io/distroless/*` | 2–100 MB | No shell/package manager; runtime-only, most secure |
-| `scratch` | 0 MB | Static binaries only (Go, Rust) |
+| `ubuntu` / full `node`, `python` | 400 MB–1 GB+ | Everything works; huge. Build stages only |
+| `*-slim` (Debian slim) | 60–250 MB | glibc, apt available; **the default choice** |
+| `*-alpine` | 5–80 MB | musl libc — native deps compile from source; slow builds, subtle breakage |
+| `gcr.io/distroless/*` | 2–100 MB | No shell/package manager but includes CA root certs; runtime-only, most secure |
+| `scratch` | 0 MB | Literally empty — static binaries only, bring your own certs |
 
-- Pin a specific tag (`node:22-slim`), ideally with digest for reproducible CI builds.
-- Prefer slim/distroless over alpine for Python (many wheels don't ship musl builds → slow source compiles).
+- **Slim beats Alpine.** Alpine's musl libc means many native dependencies (Python wheels, C-based Node modules) have no prebuilt binaries and must compile during the build — a heavy time tax plus glibc-compat crash risk, all to save a few tens of MB. Reach for Alpine only when everything in the image is verified musl-clean.
+- **Distroless beats scratch** for most runtime stages: same no-shell security profile and near-zero weight, but it ships runtime basics like root certificates so TLS works out of the box.
+
+### Pin digests, not tags
+
+Tags — even specific ones like `node:22-slim`, let alone `latest` — are mutable: the maintainer can repoint them at a different build tomorrow and silently break your pipeline.
+
+```dockerfile
+FROM node:22-slim@sha256:1a83c9d3f1c5...   # immutable; keep the tag for readability
+```
+
+Get the digest with `docker buildx imagetools inspect node:22-slim` (or `docker pull` + `docker image inspect --format '{{index .RepoDigests 0}}'`). Tools like Renovate/Dependabot can bump pinned digests automatically.
 
 ### Layer caching
 
@@ -79,6 +89,8 @@ RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
 
 ### .dockerignore (starter)
 
+`COPY . .` is a perfectly good pattern — *if* `.dockerignore` is maintained like `.gitignore`. That beats long lists of narrowly-scoped `COPY` commands, which bloat the Dockerfile and rot as the project grows. A missing or thin `.dockerignore` also ships the whole context (including `.git` and `node_modules`) to the Docker daemon on every build.
+
 ```
 .git
 .gitignore
@@ -107,6 +119,32 @@ HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:8080/heal
 
 - `COPY --chown=appuser:appuser` when the app must write to its files.
 - Scan the result: `docker scout cves app:after` or `trivy image app:after`.
+
+### Lint with droast
+
+[droast](https://github.com/immanuwell/dockerfile-roast) is a fast, opinionated Rust Dockerfile linter (~85 rules): flags `npm install` instead of `npm ci`, missing `.dockerignore`, `apt-get install` without `--no-install-recommends`, unpinned base images, uncleaned caches, missing healthchecks, and other anti-patterns.
+
+```bash
+brew install droast          # or grab a release binary
+droast Dockerfile            # single file
+droast .                     # recurse the repo
+droast --format sarif .      # CI-friendly output; a GitHub Action also exists
+```
+
+Run it before and after a rewrite; treat remaining warnings as a to-do list.
+
+### One process per container — a guideline, not a law
+
+The ideal is one process per container, but strict adherence can cost more complexity than it saves. If the app genuinely needs a sidecar-ish companion (e.g. an Nginx proxy directly in front of it) and you aren't on an orchestrator that gives you sidecars for free, running both under a lightweight supervisor like `supervisord` in one container is a legitimate choice:
+
+```dockerfile
+RUN apt-get update && apt-get install -y --no-install-recommends supervisor nginx \
+    && rm -rf /var/lib/apt/lists/*
+COPY supervisord.conf /etc/supervisor/conf.d/app.conf
+CMD ["supervisord", "-n"]
+```
+
+On Kubernetes, prefer real sidecar containers instead.
 
 ## Language templates
 

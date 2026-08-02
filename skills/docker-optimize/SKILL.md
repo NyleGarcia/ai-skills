@@ -21,13 +21,14 @@ If `dive` is available, use `dive app:before` to inspect wasted bytes per layer.
 
 ### 2. Audit the Dockerfile
 
-Check, in order of impact:
+Run `droast Dockerfile` if available (opinionated Rust linter, catches most of the below). Then check, in order of impact:
 
-- [ ] **Base image**: full-fat image (`node`, `python`, `ubuntu`) where `-slim`, `-alpine`, or distroless would do? Tag pinned (never bare `latest`)?
+- [ ] **Base image**: default to `-slim`, not Alpine. Alpine's musl libc forces native deps (Python wheels, C-based Node modules) to compile from source — slower builds and runtime breakage for a negligible size win. Full-fat images (`node`, `python`, `ubuntu`) only in build stages, if at all.
+- [ ] **Pinned by digest**: tags are mutable — `node:22-slim` can point at a different build tomorrow. Pin `FROM node:22-slim@sha256:...` for immutable, reproducible builds.
 - [ ] **Multi-stage build**: are build tools (compilers, dev dependencies, SDKs) present in the final image? They shouldn't be.
-- [ ] **Layer order**: are dependency manifests (`package.json`, `requirements.txt`, `go.mod`) copied and installed *before* `COPY . .`? Least-changing instructions first.
-- [ ] **`.dockerignore`**: exists and excludes `.git`, `node_modules`, build output, tests, docs, secrets/env files?
-- [ ] **RUN hygiene**: package-manager caches cleaned *in the same layer* (`apt-get clean`, `--no-cache-dir`, `rm -rf /var/lib/apt/lists/*`)? A later `rm` in its own layer removes nothing from image size.
+- [ ] **Layer order**: are dependency manifests (`package.json`, `requirements.txt`, `go.mod`) copied and installed *before* `COPY . .`? Least-changing instructions first — layer order *is* your cache strategy.
+- [ ] **`.dockerignore`**: `COPY . .` is a fine pattern *if* `.dockerignore` is thorough. Treat it like `.gitignore`: exclude `.git`, `node_modules`, build output, logs, secrets/env files. Prefer this over sprawling, hard-to-maintain lists of specific `COPY` commands.
+- [ ] **RUN hygiene**: package-manager caches cleaned *in the same layer* (`apt-get clean`, `--no-cache-dir`, `rm -rf /var/lib/apt/lists/*`)? A later `rm` in its own layer removes nothing from image size. Lockfile-respecting installs (`npm ci`, not `npm install`)?
 - [ ] **BuildKit cache mounts**: `RUN --mount=type=cache,...` for package-manager caches so rebuilds don't redownload?
 - [ ] **Security**: runs as non-root `USER`? No secrets in `COPY`/`ENV`/build args? `HEALTHCHECK` where relevant?
 
@@ -65,12 +66,14 @@ docker build -t app:after . && touch src/x && docker build -t app:after .
                                               # 2nd build: deps layers must be CACHED
 ```
 
-Report the before/after size and build-time delta. If the app has tests, run them against the new image.
+Re-run `droast Dockerfile` until clean. Report the before/after size and build-time delta. If the app has tests, run them against the new image.
 
 ## Rules of thumb
 
 - Order instructions least-changing → most-changing; a changed layer invalidates every layer after it.
 - One logical concern per `RUN`; chain with `&&` and clean up in the same layer.
-- `COPY` only what's needed (`COPY src/ src/`), not the whole context, in the runtime stage.
-- Prefer distroless or `-slim` over `alpine` when native deps have musl issues.
+- Build stage: `COPY . .` with a strict `.dockerignore`. Runtime stage: `COPY --from=build` only the artifacts.
+- Slim over Alpine (glibc vs musl); distroless over `scratch` for the runtime stage — same tiny/no-shell security profile, but ships runtime basics like CA root certificates.
+- Pin base images by digest, never bare `latest` or a mutable tag alone.
 - Never bake secrets into layers — use `RUN --mount=type=secret` for build-time credentials.
+- One process per container is a guideline, not a law: if the app genuinely needs e.g. an Nginx proxy in front and you're not on Kubernetes, running both under `supervisord` in one container is fine.

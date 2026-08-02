@@ -76,7 +76,48 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && apt-get install -y gcc
 ```
 
-In CI, add a shared cache backend: `docker buildx build --cache-to type=gha,mode=max --cache-from type=gha .`
+### CI / remote build caching
+
+CI runners are usually ephemeral — without an exported cache, every CI build is a cold build. BuildKit can push the layer cache somewhere persistent and pull it back next run:
+
+```bash
+# GitHub Actions cache backend
+docker buildx build --cache-to type=gha,mode=max --cache-from type=gha .
+
+# Registry cache (works on any CI) — cache lives next to the image
+docker buildx build \
+  --cache-to type=registry,ref=ghcr.io/org/app:buildcache,mode=max \
+  --cache-from type=registry,ref=ghcr.io/org/app:buildcache \
+  --push -t ghcr.io/org/app:$SHA .
+```
+
+- `mode=max` caches intermediate (build-stage) layers too, not just the final image's — essential for multi-stage builds.
+- Simplest fallback: `--cache-from` the previously pushed image tag with inline cache (`--cache-to type=inline`), at the cost of only caching final-stage layers.
+
+### Modern BuildKit instructions
+
+- **`COPY --link`**: makes the copied layer independent of preceding layers, so a base-image bump doesn't invalidate it. Ideal for `COPY --from=build --link /app/dist ./dist`.
+- **Bind mounts instead of COPY in build stages**: `RUN --mount=type=bind,source=.,target=/src go build -o /bin/app /src` — the context is mounted, not baked into a layer; nothing to clean up.
+- **Heredocs** for readable multi-line RUN blocks:
+
+  ```dockerfile
+  RUN <<EOF
+  set -e
+  apt-get update
+  apt-get install -y --no-install-recommends curl
+  rm -rf /var/lib/apt/lists/*
+  EOF
+  ```
+
+### Multi-platform builds
+
+Apple Silicon dev machines + amd64 production (or Graviton runners) make single-arch images a recurring "works on my machine" source. Build both at once:
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/org/app:$SHA --push .
+```
+
+In cross-compiling stages, split build vs target platform: `FROM --platform=$BUILDPLATFORM golang:1.24 AS build` with `GOARCH=$TARGETARCH` — compiles natively on the runner instead of under slow QEMU emulation.
 
 ### Build-time secrets
 
@@ -120,6 +161,41 @@ HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:8080/heal
 - `COPY --chown=appuser:appuser` when the app must write to its files.
 - Scan the result: `docker scout cves app:after` or `trivy image app:after`.
 
+### Signals, PID 1, and graceful shutdown
+
+A container that ignores SIGTERM gets SIGKILLed after the grace period — dropped requests and corrupted state on every deploy.
+
+```dockerfile
+# BAD: shell form — /bin/sh is PID 1, your app never sees SIGTERM
+CMD node dist/index.js
+
+# GOOD: exec form — the app is PID 1 and receives signals
+CMD ["node", "dist/index.js"]
+```
+
+- If the app spawns child processes, PID 1 must also reap zombies: use `docker run --init`, or bake in tini (`ENTRYPOINT ["tini", "--"]`).
+- `STOPSIGNAL SIGQUIT` when the app's graceful-shutdown signal isn't SIGTERM (e.g. Nginx).
+- The app itself must handle the signal — verify with `docker stop` and watch shutdown logs.
+
+### Supply chain: labels, SBOM, provenance, signing
+
+Standard OCI labels make images traceable back to source:
+
+```dockerfile
+LABEL org.opencontainers.image.source="https://github.com/org/app" \
+      org.opencontainers.image.revision="${GIT_SHA}" \
+      org.opencontainers.image.licenses="MIT"
+```
+
+Attach attestations at build time and sign in CI:
+
+```bash
+docker buildx build --sbom=true --provenance=mode=max -t ghcr.io/org/app:$SHA --push .
+cosign sign --yes ghcr.io/org/app@$DIGEST
+```
+
+`--provenance` produces SLSA provenance (what built the image, from what source); `--sbom` embeds a software bill of materials that scanners and auditors can consume without pulling the image apart.
+
 ### Lint with droast
 
 [droast](https://github.com/immanuwell/dockerfile-roast) is a fast, opinionated Rust Dockerfile linter (~85 rules): flags `npm install` instead of `npm ci`, missing `.dockerignore`, `apt-get install` without `--no-install-recommends`, unpinned base images, uncleaned caches, missing healthchecks, and other anti-patterns.
@@ -150,27 +226,35 @@ On Kubernetes, prefer real sidecar containers instead.
 
 ### Node.js
 
+Prerequisite: a maintained `.dockerignore` (see above) — it's what makes `COPY . .` safe.
+
 ```dockerfile
 # syntax=docker/dockerfile:1
-FROM node:22-slim AS build
+
+# Builder: slim (not alpine), pinned by digest. Replace the digest with the
+# current one: docker buildx imagetools inspect node:22-slim
+FROM node:22-slim@sha256:<digest> AS build
 WORKDIR /app
-COPY package*.json ./
+# Onion caching: manifests first, so the dependency layer survives code edits
+COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
+# Safe because .dockerignore excludes node_modules, .git, logs, env files
 COPY . .
 RUN npm run build && npm prune --omit=dev
 
-FROM node:22-slim
+# Runtime: distroless — no shell, no package manager, but CA certs included.
+# Runs as nonroot by default; exec-form CMD so the app receives SIGTERM.
+FROM gcr.io/distroless/nodejs22-debian12:nonroot@sha256:<digest>
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
-USER node
+COPY --from=build --link /app/node_modules ./node_modules
+COPY --from=build --link /app/dist ./dist
+COPY --from=build --link /app/package.json ./
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+CMD ["dist/index.js"]
 ```
 
-Distroless runtime variant: `FROM gcr.io/distroless/nodejs22-debian12` and `CMD ["dist/index.js"]`.
+Slim runtime variant (when you need a shell for debugging): `FROM node:22-slim@sha256:<digest>`, add `USER node`, and `CMD ["node", "dist/index.js"]`.
 
 ### Python (uv)
 

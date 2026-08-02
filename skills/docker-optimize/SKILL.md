@@ -30,6 +30,8 @@ Run `droast Dockerfile` if available (opinionated Rust linter, catches most of t
 - [ ] **`.dockerignore`**: `COPY . .` is a fine pattern *if* `.dockerignore` is thorough. Treat it like `.gitignore`: exclude `.git`, `node_modules`, build output, logs, secrets/env files. Prefer this over sprawling, hard-to-maintain lists of specific `COPY` commands.
 - [ ] **RUN hygiene**: package-manager caches cleaned *in the same layer* (`apt-get clean`, `--no-cache-dir`, `rm -rf /var/lib/apt/lists/*`)? A later `rm` in its own layer removes nothing from image size. Lockfile-respecting installs (`npm ci`, not `npm install`)?
 - [ ] **BuildKit cache mounts**: `RUN --mount=type=cache,...` for package-manager caches so rebuilds don't redownload?
+- [ ] **Signals & PID 1**: `CMD`/`ENTRYPOINT` in exec (JSON array) form so SIGTERM reaches the app, not a wrapping shell? An init (`tini` / `docker run --init`) if the app spawns child processes?
+- [ ] **CI caching**: builds in CI export/import cache (`--cache-to`/`--cache-from` with a registry or `gha` backend)? Without it, every CI build is a cold build.
 - [ ] **Security**: runs as non-root `USER`? No secrets in `COPY`/`ENV`/build args? `HEALTHCHECK` where relevant?
 
 ### 3. Rewrite
@@ -38,20 +40,19 @@ Apply the canonical shape — build stage with all tooling, minimal runtime stag
 
 ```dockerfile
 # syntax=docker/dockerfile:1
-FROM node:22-slim AS build
+FROM node:22-slim@sha256:<digest> AS build        # slim, digest-pinned
 WORKDIR /app
-COPY package*.json ./
+COPY package.json package-lock.json ./            # manifests first: onion caching
 RUN --mount=type=cache,target=/root/.npm npm ci
-COPY . .
+COPY . .                                          # safe — .dockerignore is thorough
 RUN npm run build && npm prune --omit=dev
 
-FROM node:22-slim
+FROM gcr.io/distroless/nodejs22-debian12:nonroot@sha256:<digest>
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-USER node
-CMD ["node", "dist/index.js"]
+CMD ["dist/index.js"]                             # exec form: app gets SIGTERM
 ```
 
 Language-specific templates (Node, Python, Go, Java) and advanced techniques: see [REFERENCE.md](REFERENCE.md).

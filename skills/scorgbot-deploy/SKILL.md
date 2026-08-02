@@ -29,7 +29,7 @@ Operating manual for `voidput/sc-org-bot-deploy`: Helm chart + ArgoCD manifests 
 
 ## Releases & image updates — read the actual regexes
 
-Rollouts are driven by ArgoCD Image Updater with git write-back (expect updater commits; don't fight them, and don't edit image tags by hand). The per-env allow-tags differ and neither has an optional beta group:
+Rollouts are driven by ArgoCD Image Updater with git write-back (expect `build: automatic update of sc-org-bot-dev` commits; don't fight them, and don't edit image tags by hand). Write-back lands in `charts/sc-org-bot/.argocd-source-sc-org-bot-dev.yaml` — **that file, not `values-dev.yaml`, is the live dev tag.** The `tag:` in the values files is only the initial/base value and goes stale (both still say `1.0.0-beta.45` while dev runs far past that). To answer "what's deployed in dev?", read the `.argocd-source` file or the latest updater commit. Prod has no `.argocd-source` file because it has never auto-updated. The per-env allow-tags differ and neither has an optional beta group:
 
 - **Dev** (`dev-app.yaml` annotations): `regexp:^v?1\.\d+\.\d+-beta\.\d+$` — `-beta.N` **required**; stable tags never flow to dev.
 - **Prod** (`prod-app.yaml` annotations): `regexp:^v?1\.\d+\.\d+$` — stable only; no prerelease suffix matches.

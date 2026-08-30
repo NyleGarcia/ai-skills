@@ -106,6 +106,57 @@ else
     echo "Skipping Claude Code plugin marketplace setup (claude CLI not found or marketplace.json missing)."
 fi
 
+# 3b. Configure Statusline
+STATUSLINE_SRC="$REPO_DIR/scripts/statusline.py"
+SETTINGS_FILE="$HOME/.claude/settings.json"
+statusline_ok=0
+
+if [ -f "$STATUSLINE_SRC" ]; then
+    chmod +x "$STATUSLINE_SRC"
+
+    if command -v python3 >/dev/null 2>&1; then
+        if python3 - "$SETTINGS_FILE" "$STATUSLINE_SRC" <<'PYEOF'
+import json
+import os
+import sys
+
+settings_path, command = sys.argv[1], sys.argv[2]
+settings = {}
+
+if os.path.exists(settings_path):
+    try:
+        with open(settings_path, encoding="utf-8") as fh:
+            settings = json.load(fh) or {}
+    except (OSError, ValueError) as exc:
+        sys.stderr.write(f"Could not parse {settings_path}: {exc}\n")
+        sys.exit(1)
+    if not isinstance(settings, dict):
+        sys.stderr.write(f"{settings_path} is not a JSON object; leaving it alone.\n")
+        sys.exit(1)
+
+settings["statusLine"] = {"type": "command", "command": command, "padding": 0}
+
+os.makedirs(os.path.dirname(settings_path), exist_ok=True)
+tmp_path = f"{settings_path}.tmp"
+with open(tmp_path, "w", encoding="utf-8") as fh:
+    json.dump(settings, fh, indent=2)
+    fh.write("\n")
+os.replace(tmp_path, settings_path)
+PYEOF
+        then
+            echo "Statusline configured: $STATUSLINE_SRC"
+            statusline_ok=1
+        else
+            echo "Warning: could not update statusLine in $SETTINGS_FILE. Add it manually:"
+            echo "  \"statusLine\": {\"type\": \"command\", \"command\": \"$STATUSLINE_SRC\", \"padding\": 0}"
+        fi
+    else
+        echo "Skipping statusline setup (python3 not found)."
+    fi
+else
+    echo "Skipping statusline setup ($STATUSLINE_SRC missing)."
+fi
+
 # Clean up empty backup dir if nothing was backed up
 if [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
     rmdir "$BACKUP_DIR"
@@ -130,6 +181,16 @@ for item in "${TARGETS[@]}"; do
         echo "Valid: $target -> $(readlink "$target")"
     fi
 done
+
+# Verify statusline wiring
+if [ "$statusline_ok" -eq 1 ]; then
+    if [ -x "$STATUSLINE_SRC" ]; then
+        echo "Valid: statusLine -> $STATUSLINE_SRC"
+    else
+        echo "Error: statusline script is not executable: $STATUSLINE_SRC"
+        errors=$((errors + 1))
+    fi
+fi
 
 if [ $errors -eq 0 ]; then
     echo "--------------------------------------------------"

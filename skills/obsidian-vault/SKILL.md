@@ -25,7 +25,18 @@ Mostly flat at root level.
 - Notes link to dependencies/related notes at the bottom
 - Index notes are just lists of `[[wikilinks]]`
 
-## Workflows
+## Obsidian MCP (preferred when available)
+
+If `obsidian` MCP server connected, check `obsidian_list_vaults` for registered vault ids and use MCP tools instead of raw file ops (paths vault-relative):
+
+- **Search:** `obsidian_search_vault` — content + filename, replaces find/grep below.
+- **Read/create/edit:** `obsidian_read_note`, `obsidian_create_note`, `obsidian_edit_note` (read first, pass etag on edit — guards concurrent Obsidian edits).
+- **Move/rename/tags:** `obsidian_move_note`, `obsidian_add_tags`, `obsidian_manage_tags`.
+- Destructive ops journaled under `.obsidian-mcp/`.
+
+**Fallback:** `mcp__obsidian__*` tools not present (server not installed/connected), this vault (`AI Research`) not registered, or tool call errors → use filesystem workflows below directly (Read/Write/Grep on vault path), no asking, no retry loop. On Linux boxes, `~/docs` + repo `./docs` vaults belong to `docs-vault` skill, not this one.
+
+## Workflows (filesystem fallback)
 
 ### Search for notes
 

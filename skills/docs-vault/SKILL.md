@@ -53,7 +53,18 @@ Distinct from `obsidian-vault` skill (AI Research vault on Mac/WSL). This vault 
 2. Append dated findings ("Happened in practice: ..."), don't rewrite history.
 3. If moved/renamed, fix `Home.md` and inbound wikilinks: `grep -rl '\[\[old-name\]\]' ~/docs`.
 
-### Obsidian integration
+### Obsidian MCP (preferred when available)
+
+`obsidian` MCP server registers vaults by id — check with `obsidian_list_vaults` (or `claude mcp list`). Current ids: `home` = `~/docs`; repo `./docs` vaults registered per-repo (e.g. `sc-org-bot`, `openwave`, `tobii-linux`). Paths in tool calls are vault-relative.
+
+- **Search:** `obsidian_search_vault` (content + filename) over `grep -rli`.
+- **Read/create/edit:** `obsidian_read_note` → `obsidian_create_note` / `obsidian_edit_note`. Read first, pass etag when editing — guards concurrent Obsidian edits.
+- **Move/rename:** `obsidian_move_note` — still fix `Home.md` + inbound wikilinks yourself.
+- **Tags:** `obsidian_add_tags` / `obsidian_manage_tags` for frontmatter `tags:` instead of hand-editing YAML.
+- Destructive ops journaled under `.obsidian-mcp/`.
+- **Fallback:** `mcp__obsidian__*` tools not present (server not installed/connected), vault unregistered, or tool call errors → work files directly (Read/Write/Edit/Grep on the path), same conventions, no asking, no retry loop. New repo vault worth registering → add `--vault name=/path/docs` to `obsidian` server args in `~/.claude.json`.
+
+### Obsidian plugin integration
 
 Vault ships with `claude-code-skills` plugin (v1.0.5, github.com/p3nguln5/obsidian-claude-code-skills) preinstalled in `.obsidian/plugins/` — highlight text → right-click → invoke Claude Code skill, streamed to sidebar. Requires `claude` CLI on PATH; desktop only. First open: "Open folder as vault" on `~/docs`, turn off restricted mode.
 

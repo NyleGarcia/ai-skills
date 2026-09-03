@@ -4,6 +4,7 @@ Master index of all agentic skills loaded in this environment.
 
 ## Meta
 - **`using-agent-skills`**: Discovers and invokes agent skills. Use when starting a session or when you need to discover which skill applies to the current task. This is the meta-skill that governs how all other skills are discovered and invoked.
+- **`workflow-standards`**: House rules for maximum performance per token — dev lifecycle pipeline, effort-level mapping (L0–L4), Workflow/subagent orchestration and model-selection rules, ralph-loop escalation triggers, and token-efficiency principles. Use when starting any non-trivial task, sizing process, planning orchestration, or choosing subagent models.
 
 ## Define
 - **`idea-refine`**: Refines raw ideas into sharp, actionable concepts through structured divergent and convergent thinking. Use when an idea is still vague, when you need to stress-test assumptions before committing to a plan, or when you want to expand options before converging on one. Triggers on "ideate", "refine this idea", or "stress-test my plan".

@@ -6,7 +6,7 @@ Master index of all agentic skills loaded in this environment.
 
 | Category | Skills |
 |----------|--------|
-| **Meta** | `using-agent-skills` |
+| **Meta** | `using-agent-skills`, `workflow-standards` |
 | **Define** | `interview-me`, `idea-refine`, `spec-driven-development`, `to-prd` |
 | **Plan** | `planning-and-task-breakdown`, `planner-architect`, `project-management`, `to-issues` |
 | **Build** | `incremental-implementation`, `context-engineering`, `source-driven-development`, `doubt-driven-development`, `frontend-ui-engineering`, `test-driven-development`, `api-and-interface-design`, `design-an-interface` |
@@ -14,7 +14,7 @@ Master index of all agentic skills loaded in this environment.
 | **Review** | `code-review-and-quality`, `code-simplification`, `security-and-hardening`, `security-specialist`, `performance-optimization`, `pr-reviewer`, `web-quality` |
 | **Ship** | `git-workflow-and-versioning`, `ci-cd-and-automation`, `cicd-k8s-docker`, `docker-optimize`, `deprecation-and-migration`, `documentation-and-adrs`, `domain-model`, `shipping-and-launch`, `web-assets` |
 | **Meta-Evolution**| `agentic-evolution`, `write-a-skill`, `technical-writing`, `subagent-orchestration` |
-| **Productivity** | `caveman`, `obsidian-vault`, `zoom-out`, `edit-article` |
+| **Productivity** | `caveman`, `obsidian-vault`, `docs-vault`, `zoom-out`, `edit-article` |
 | **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
 | **Methodologies** | `grill-me`, `js-style-guide`, `migrate-to-shoehorn`, `request-refactor-plan`, `scaffold-exercises`, `triage-issue`, `ubiquitous-language` |
 

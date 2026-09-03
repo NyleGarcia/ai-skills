@@ -10,6 +10,8 @@ Newest first. One entry per landed task (L1+), Keep-a-Changelog types: Added / C
 
 - **Changed** (L1): `workflow-standards` — Model Selection Doctrine split into 4 tiers; new **Trivial** tier (`haiku`, fallback `sonnet`) for zero-judgment one-shot work. Added haiku gate (4 conditions: unique answer, one-shot, inspection-verifiable, fully-specified prompt) and never-haiku list (merge/deploy gates, root-cause, cross-file reasoning). Mechanical tier reworded — invented abbreviations/arrows dropped as fake savings.
 - **Changed**: `caveman` skill — levels table (lite/full/ultra), sub-skill specs, negation/number/language-lock preservation rules.
+- **Changed** (L1): `workflow-standards` — orchestration split into **Agent Tool (default path)** and **Workflow Tool (opt-in)**. Agent-tool section adds spawn test (3 conditions), agent-type→model picks, ≤4 concurrency + one-message batching + `isolation: worktree` for parallel edits, prompt contract, no-nested-delegation, reuse/reap, producer-never-verifies.
+- **Changed**: escalation trigger table inlined, Token Efficiency merged 7→4 bullets — kept file under the 100-line skill cap (99).
 - **Added**: `issue-council-report` skill; this `docs/` vault materialized.
 
 ## 2026-09-03 — workflow-standards: mandatory docs-closeout gate

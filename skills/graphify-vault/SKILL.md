@@ -1,9 +1,11 @@
 ---
-name: graphify
+name: graphify-vault
 description: Build a local knowledge graph of this repo (or any folder/GitHub repo) via the graphify CLI and export it in Obsidian-compatible format into docs/knowledge/. Use when user says "graphify this", "map the codebase", "build a knowledge graph", or wants architecture/relationship queries instead of grepping.
 ---
 
-# Graphify (repo wrapper)
+# Graphify Vault (repo wrapper)
+
+Distinct from the plain `/graphify` skill in `.claude/skills/graphify/` (installer-owned, upstream tool's own pipeline). This skill layers this repo's Obsidian/docs-vault conventions on top — invoke this one when you want output that fits `docs/knowledge/`.
 
 Thin wrapper around the real [Graphify](https://github.com/Graphify-Labs/graphify) CLI (`graphifyy` on PyPI), installed project-scoped for this repo (`.claude/skills/graphify/`, `.claude/settings.json` hooks, root `CLAUDE.md` graphify section — installer-owned, don't hand-edit those; re-run `graphify install --project --platform claude` to refresh them).
 

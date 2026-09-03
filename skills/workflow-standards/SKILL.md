@@ -1,6 +1,6 @@
 ---
 name: workflow-standards
-description: House rules for maximum performance per token — dev lifecycle pipeline (spec→plan→build→test→review→ship→docs), effort-level mapping (L0–L4) from task size to process depth, Workflow/subagent orchestration and model-selection rules, ralph-loop escalation triggers, and token-efficiency principles. Use when starting any non-trivial task, sizing how much process a task deserves, planning multi-agent orchestration, choosing models for subagents, or deciding whether to escalate a stuck loop.
+description: House rules for maximum performance per token — dev lifecycle pipeline (spec→plan→build→test→review→ship→docs), mandatory docs-closeout gate ending every task, effort-level mapping (L0–L4) from task size to process depth, Workflow/subagent orchestration and model-selection rules, ralph-loop escalation triggers, and token-efficiency principles. Use when starting any non-trivial task, sizing how much process a task deserves, planning multi-agent orchestration, choosing models for subagents, deciding whether to escalate a stuck loop, or closing out a task.
 ---
 
 # Workflow Standards
@@ -24,12 +24,23 @@ Escalate a level when: unfamiliar code, prod-facing, or being confidently wrong 
 ```
 docs/plans/now/todo.md → /spec (docs/plans/specs/) → /plan → GH issues (gh CLI, link docs/plans/)
   → /build + ralph-loop (tests/lint/build iterate autonomously)
-  → /review → /ship → docs update → check [x] in todo, re-link, remove from now/
+  → /review → /ship → docs closeout (see below) → check [x] in todo, re-link, remove from now/
 ```
 
-- **Docs at the end, always:** repo-level truth → that repo's `./docs`; system Linux things (tuning, diag, env) → `~/docs` via `docs-vault`.
 - **Board hygiene:** GH Project statuses mirror branch reality — `gh project item-edit` as part of the step, not later.
 - **CI gate:** after every push, watch ALL triggered runs to green before calling anything done (global CLAUDE.md one-liner).
+
+## Docs Closeout — Mandatory Last Step
+
+Every task L1+ ends with a docs pass before it counts as done — same gate as CI green. L0 too if it changed behavior/config anyone else relies on. Run the checklist top to bottom:
+
+1. **Changelog, always:** append entry to that repo's `docs/changelog.md` (create if missing; newest first, Keep-a-Changelog style): `## YYYY-MM-DD — <one-line summary>` + type (`Added/Changed/Fixed/Removed`), effort level, wikilinks to touched truth notes/specs, PR/issue refs.
+2. **Repo truth changed** (arch, API, ADR-worthy decision, new skill/script)? → update that repo's `./docs` note(s) + `docs/Home.md` index (`docs-vault` conventions).
+3. **System/env fix** (Linux tuning, diag, setup, handoff)? → note in `~/docs` + `~/docs/Home.md` index.
+4. **Plans:** check `[x]` in `docs/plans/now/todo.md`, re-link via wikilink to truth note, remove from `now/`; archive/close spec.
+5. **Skill learned constraint/edge case?** → self-anneal: update relevant `SKILL.md`.
+
+Changelog entry (step 1) never skipped for L1+. Steps 2–5: if nothing applies, state `docs: no impact` explicitly — silent skip not allowed. Ralph-loop and Workflow runs inherit this gate: final iteration includes docs closeout before reporting done.
 
 ## Ralph-Loop & Escalation
 
@@ -62,7 +73,8 @@ Core asymmetry: **a worker's mistake gets caught by the verifier; a verifier's m
 |------|------------------|-------|----------|
 | **Judgment** | `fable` (`opus`) | verifiers, reviewers, auditors, planners — anything whose output gates merge/deploy or sets direction | adversarial verify of findings, code/security review, architecture & spec planning, ralph Reviewer/Auditor, root-cause when stuck, final audit |
 | **Production** | `opus` (`sonnet`) | workers — recoverable output that tests + review will catch | implementation, refactoring, debugging w/ repro, test writing, migration execution |
-| **Mechanical** | `sonnet` (`haiku` for trivial lookups) | deterministic-ish, low-judgment | fan-out search (Explore), file listing, formatting, boilerplate, status/CI checks, log parsing, schema'd extraction |
+| **Mechanical** | `sonnet` (`haiku` if shape is fully specified) | deterministic-ish, low-judgment, still needs some reading comprehension | fan-out search (Explore), boilerplate, refactor-by-pattern, log parsing, schema'd extraction |
+| **Trivial** | `haiku` (`sonnet`) | zero-judgment, one-shot, verifiable at a glance — output is right or obviously wrong | single-fact lookup, file/dir listing, formatting & lint-fix, status/CI/PR checks, git metadata, string/JSON reshaping, yes-no existence checks |
 
 Rules:
 
@@ -70,6 +82,8 @@ Rules:
 - **Forced worker downgrade** (opus unavailable) → compensate: bump review one level and/or add a fable verify pass.
 - **Upgrade worker → fable** when: task is L4, no verifiable test signal (verifier can't save you), or 3+ failed iterations — being stuck is a judgment problem, not a typing problem.
 - **One fable verify pass > several opus passes:** pass-count diversity doesn't close a capability gap on subtle bugs.
+- **Haiku gate — all four or step up to sonnet:** (1) no design choice — the right answer is unique; (2) task is one-shot, no multi-step plan; (3) output is verifiable by inspection or a command; (4) prompt carries the full spec (exact paths, exact format) — haiku won't infer intent from a vague ask.
+- **Never haiku for:** anything that gates merge/deploy, root-cause work, cross-file reasoning, or a prompt you'd have to think about yourself. A retry loop on haiku costs more than sonnet first try.
 - **Ambiguous role?** Classify by blast radius of an unnoticed error: gates something → judgment tier; caught later anyway → production tier.
 - Wiring: Agent tool `model` param; Workflow `agent(prompt, {model: 'fable'|'opus'|'sonnet'|'haiku'})`; ralph roles per Ralph-Loop section above.
 

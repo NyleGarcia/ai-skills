@@ -22,7 +22,7 @@ Escalate a level when: unfamiliar code, prod-facing, or being confidently wrong 
 ## Lifecycle Pipeline
 
 ```
-plans/now/todo.md → /spec (plans/specs/) → /plan → GH issues (gh CLI, link plans/)
+docs/plans/now/todo.md → /spec (docs/plans/specs/) → /plan → GH issues (gh CLI, link docs/plans/)
   → /build + ralph-loop (tests/lint/build iterate autonomously)
   → /review → /ship → docs update → check [x] in todo, re-link, remove from now/
 ```
@@ -33,7 +33,7 @@ plans/now/todo.md → /spec (plans/specs/) → /plan → GH issues (gh CLI, link
 
 ## Ralph-Loop & Escalation
 
-Default execution engine for L3+: autonomous code→verify→docs loop on `plans/now/todo.md` (full procedure: `ralph-loop` skill). Stay solo until a trigger fires — solo iteration is the cheapest correct path; escalating without a trigger burns tokens on coordination.
+Default execution engine for L3+: autonomous code→verify→docs loop on `docs/plans/now/todo.md` (full procedure: `ralph-loop` skill). Stay solo until a trigger fires — solo iteration is the cheapest correct path; escalating without a trigger burns tokens on coordination.
 
 | Auto-escalation trigger | Threshold |
 |---|---|

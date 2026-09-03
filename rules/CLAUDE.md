@@ -53,6 +53,7 @@ You must recognize and adhere to the repository layout:
 - `skills/<skill_name>/SKILL.md` — Declarative SOP / instructions (under 100 lines).
 - `skills/<skill_name>/scripts/` — Skill-specific helper/utility execution scripts.
 - `scripts/` — Global workspace helper, configuration, and automation scripts.
+- `docs/` — Repo vault (Obsidian-compatible): all repo docs + `docs/plans/` WIP horizons. See Project Management & Planning.
 - `plugins/` — Bundled customizations (nested `skills/` and `agents/`).
 - `rules/` — Permanent environment rules (`CLAUDE.md` for Claude Code, `GEMINI.md` for Gemini CLI).
 - `tmp/` or `.tmp/` — Ephemeral intermediate processing data (dossiers, scraped data, caches). Must be in `.gitignore`. Never commit.
@@ -70,14 +71,26 @@ You must recognize and adhere to the repository layout:
   - Do not spawn subagents (`Agent` tool) for trivial tasks (e.g., simple file edits, quick commands, single file reads). Perform tasks yourself directly.
   - Spawn subagents only when isolation is required, or when running highly parallel/independent tasks.
   - Re-use idle subagents via `SendMessage` instead of spawning new ones.
+- **Model Selection (Workflows & Subagents):**
+  - Principle: highest-capability model for planning, verification, and real implementation work; step down only for small/mechanical items.
+  - **Verifiers / Reviewers / Auditors / Planners:** always `fable` if available; fall back to `opus` if not.
+  - **Workers (implementation, refactoring, debugging):** always `opus` if available; fall back to `sonnet` if not.
+  - **Small items (simple searches, file listing, formatting, boilerplate, status checks):** `sonnet` (or `haiku` for trivial lookups).
+  - Applies to `Workflow` scripts (`agent(..., {model})`), the `Agent` tool (`model` param), and any ralph-loop delegation (Explorer -> sonnet, Worker -> opus, Reviewer/Auditor -> fable).
+  - Never downgrade a verifier to save tokens — verification quality gates everything downstream.
 
 ## Project Management & Planning
-- **`plans/` vs `docs/` Lifecycle:**
-  - `plans/` (WIP): 3-horizon model — `now/` (active sprint), `next/` (confirmed backlog), `later/` (ideas/ice box), `specs/` (implementation specs).
-  - `docs/` (Truth): Immutable reference of production state.
-  - Pipeline: `plans/now/todo.md` → draft spec in `plans/specs/` → code → update `docs/` → check `[x]` in `now/todo.md` (re-link to `docs/`) → remove from `now/`.
+- **`./docs/` Repo Vault (Obsidian-compatible):**
+  - ALL repo-level docs AND plans live under `./docs/` — one Obsidian-compatible vault per repo. No top-level `plans/` dir.
+  - Structure: `docs/Home.md` (master index, wikilinks to every note) · `docs/plans/` (WIP, 3-horizon: `now/` active sprint, `next/` confirmed backlog, `later/` ideas/ice box, `specs/` implementation specs) · rest of `docs/` (Truth: architecture, ADRs, API docs — immutable reference of production state).
+  - Obsidian format everywhere in `docs/`: kebab-case filenames, YAML frontmatter with `tags:`, wikilinks `[[note-name]]`, assets beside notes. Update `docs/Home.md` on any add/move/rename. Conventions per the `docs-vault` skill.
+  - Pipeline: `docs/plans/now/todo.md` → draft spec in `docs/plans/specs/` → code → update truth notes in `docs/` → check `[x]` in `now/todo.md` (re-link via wikilink to truth note) → remove from `now/`.
+- **`~/docs` Reference Vault (Obsidian-compatible, system-level only):**
+  - After any system fix, environment setup, or project handoff, write/update a note in `~/docs` per the `docs-vault` skill (folder structure, frontmatter, wikilinks).
+  - Always update `~/docs/Home.md` index when adding/moving/renaming notes.
+  - Prefer extending an existing note over creating a near-duplicate; search `~/docs` first.
 - **GitHub Projects Syncing:**
-  - Create issues for all tasks. Inject links to local `plans/` inside issue descriptions.
+  - Create issues for all tasks. Inject links to local `docs/plans/` inside issue descriptions.
   - Vigorously manage project board state via `gh` CLI (`gh project item-add`, `gh project item-edit`).
   - Board statuses must perfectly reflect branch activity/reality.
 - **Ralph-Loop Integration:**

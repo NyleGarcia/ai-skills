@@ -5,14 +5,15 @@ description: Maintain ~/docs — the Obsidian-compatible reference vault for sys
 
 # Docs Vault (~/docs)
 
-Immutable-ish reference of **current production state** on this machine. WIP lives in `plans/`; when work ships, truth lands here.
+Immutable-ish reference of **current production state** on this machine. Repo WIP lives in that repo's `docs/plans/`; when system-level work ships, truth lands here.
 
 Distinct from `obsidian-vault` skill (AI Research vault on Mac/WSL). This vault is local `~/docs` on Linux boxes.
 
 ## Scope: ~/docs vs ./docs
 
 - **`~/docs` (this vault):** system Linux things — OS tuning, customization, diagnostics, driver/boot/network fixes, gaming setup, machine setup, work env, cross-project handoffs, notes, memories. Anything that outlives or spans repos.
-- **`./docs` (inside a git repo):** ALL repo-level things — application architecture, ADRs, API docs, project plans/specs tied to that code. Lives with the repo, NOT in this vault.
+- **`./docs` (inside a git repo):** ALL repo-level things — application architecture, ADRs, API docs, AND plans/specs (`docs/plans/{now,next,later,specs}/`). Lives with the repo, NOT in this vault.
+- **`./docs` is itself an Obsidian-compatible mini-vault:** same conventions as `~/docs` — kebab-case `.md` filenames, YAML frontmatter with `tags:`, wikilinks `[[note-name]]`, assets beside notes, and a `docs/Home.md` master index updated on every add/move/rename.
 - Rule of thumb: would it matter after `rm -rf` of the repo? Yes → `~/docs`. No → `./docs`.
 - Per-repo `./docs` may still get a pointer note in `~/docs/projects/<name>/` (handoffs, machine-specific config) — link, don't duplicate.
 

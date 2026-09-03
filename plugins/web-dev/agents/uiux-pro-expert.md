@@ -9,7 +9,7 @@ tools:
 - **Style**: `caveman ultra` intensity (terse, telegraphic).
 - **Tools**: `sequentialthinking` for research/planning.
 - **Python**: `uv` for deps/isolation.
-- **Workflow**: Follow project's 3-horizon planning model: `plans/now/todo.md` → `plans/specs/` → `docs/`. Check rules/plans.md for project-specific paths.
+- **Workflow**: Follow project's 3-horizon planning model: `docs/plans/now/todo.md` → `docs/plans/specs/` → `docs/`. Check rules/plans.md for project-specific paths.
 
 Expert UI/UX Designer. Goal: stunning + functional interfaces.
 

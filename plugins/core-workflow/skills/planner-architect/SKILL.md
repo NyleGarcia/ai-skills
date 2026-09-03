@@ -10,13 +10,13 @@ Strategic design and structured implementation.
 ## 1. Research & Design
 - Map existing codebase and dependencies.
 - Weight architectural options (e.g., REST vs GraphQL, SQL vs NoSQL).
-- Draft `plans/specs/` technical specifications.
+- Draft `docs/plans/specs/` technical specifications.
 
 ## 2. Implementation Planning
-- Create `plans/now/todo.md`.
+- Create `docs/plans/now/todo.md`.
 - Break complex epics into discrete, estimatable tasks.
 - Define success metrics and validation strategy.
 
 ## 3. Documentation
 - Keep `docs/` updated as the single source of truth.
-- Archive `plans/` once feature is verified in production.
+- Archive `docs/plans/` once feature is verified in production.

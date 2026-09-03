@@ -8,10 +8,10 @@ description: Integrated project management skill. Merges github-planner, github-
 End-to-end orchestration from Epic to Ship.
 
 ## 1. SDLC Lifecycle (`sdlc-delivery`)
-- **Plans (WIP)**: Mutable `plans/` dir — 3-horizon model: `now/` (active), `next/` (backlog), `later/` (ideas).
-- **Specs**: `plans/specs/` for technical design docs.
+- **Plans (WIP)**: Mutable `docs/plans/` dir — 3-horizon model: `now/` (active), `next/` (backlog), `later/` (ideas).
+- **Specs**: `docs/plans/specs/` for technical design docs.
 - **Docs (Truth)**: Immutable production reference.
-- **Pipeline**: `plans/now/todo.md` → `plans/specs/` → code → `docs/` → remove from `now/`.
+- **Pipeline**: `docs/plans/now/todo.md` → `docs/plans/specs/` → code → `docs/` → remove from `now/`.
 
 ## 2. GitHub Integration (`github-planner` / `github-project`)
 Use `gh` CLI to sync local state with GitHub.
@@ -21,7 +21,7 @@ Use `gh` CLI to sync local state with GitHub.
 
 ## 3. Persistent Tracking (`planning-with-files`)
 Strict `todo.md` tracking.
-- Master list in `plans/now/todo.md`.
+- Master list in `docs/plans/now/todo.md`.
 - Link tasks to specific plan files or final docs.
 
 ## 4. Multi-Workstream Orchestration (`mux-workstream-manager`)

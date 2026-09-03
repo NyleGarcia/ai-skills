@@ -5,6 +5,10 @@ tmp/
 .agents/
 scratch/
 
+# graphify (regenerate with `graphify extract .` / `graphify export obsidian --dir docs/knowledge`)
+graphify-out/
+docs/knowledge/
+
 # Secrets & Configs
 .env
 *.env

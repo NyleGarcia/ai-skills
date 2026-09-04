@@ -14,7 +14,7 @@ Master index of all agentic skills loaded in this environment.
 | **Review** | `code-review-and-quality`, `code-simplification`, `security-and-hardening`, `security-specialist`, `performance-optimization`, `pr-reviewer`, `web-quality` |
 | **Ship** | `git-workflow-and-versioning`, `ci-cd-and-automation`, `cicd-k8s-docker`, `docker-optimize`, `deprecation-and-migration`, `documentation-and-adrs`, `domain-model`, `shipping-and-launch`, `web-assets` |
 | **Meta-Evolution**| `agentic-evolution`, `write-a-skill`, `technical-writing`, `subagent-orchestration` |
-| **Productivity** | `caveman`, `obsidian-vault`, `docs-vault`, `zoom-out`, `edit-article` |
+| **Productivity** | `caveman`, `obsidian-vault`, `docs-vault`, `graphify-docs-upgrade`, `graphify-docs-gaps`, `zoom-out`, `edit-article` |
 | **Backend/Data** | `backend`, `python-dev`, `discord-bot`, `alloydb-basics`, `bigquery-basics`, etc. |
 | **Methodologies** | `grill-me`, `js-style-guide`, `migrate-to-shoehorn`, `request-refactor-plan`, `scaffold-exercises`, `triage-issue`, `ubiquitous-language` |
 

@@ -76,6 +76,8 @@ Cloud SQL handles backups, high availability, and secure connectivity for relati
 - **`caveman`**: Ultra-compressed communication mode. Cuts token usage ~75% by dropping filler, articles, and pleasantries while keeping full technical accuracy. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman.
 
 - **`edit-article`**: Edit and improve articles by restructuring sections, improving clarity, and tightening prose. Use when user wants to edit, revise, or improve an article draft.
+- **`graphify-docs-gaps`**: Scan the graphify graph for god-nodes/communities with zero `docs/` coverage and produce a ranked gap list, feeding `graphify-docs-upgrade` for drafting. Use when user wants to find missing docs, undocumented code, or a prioritized list of what to document next.
+- **`graphify-docs-upgrade`**: Convert graphify's raw graph output or Obsidian export into curated `docs/` notes, and detect/fix drift in existing `docs/` notes against the current graph. Use when user wants graphify findings promoted into real docs instead of left as raw dump, or wants docs refreshed against code changes.
 - **`obsidian-vault`**: Search, create, and manage notes in the Obsidian vault with wikilinks and index notes. Use when user wants to find, create, or organize notes in Obsidian.
 - **`zoom-out`**: Tell the agent to zoom out and give broader context or a higher-level perspective. Use when you're unfamiliar with a section of code or need to understand how it fits into the bigger picture.
 

@@ -15,14 +15,14 @@ How work moves through this environment, tuned for best bang-for-buck (quality p
 | **L1 small** | single-file bug/feature, clear repro | `test-driven-development` (red→green), direct | none | `/code-review low` |
 | **L2 medium** | multi-file feature, refactor, ~1 session | `/plan` → `/build` (incremental) → `/test` | Explore agents ok (sonnet); no Workflow | `/code-review medium`–`high` |
 | **L3 large** | new feature/system, multi-day, parallelizable | `/spec` → `/plan` → `to-issues` → `/ralph-loop` | Workflow if user opted in (<15 agents); roles per model table | `/code-review high` + fable verify pass |
-| **L4 critical** | prod deploy, security, migrations, irreversible | L3 + `doubt-driven-development` + `security:security-review` | fable verifiers mandatory, never skipped | `/code-review max` or `ultra`; `/ship` checklist |
+| **L4 critical** | prod deploy, security, migrations, irreversible | L3 + `doubt-driven-development` + `security:security-and-hardening` | fable verifiers mandatory, never skipped | `/code-review max` or `ultra`; `/ship` checklist |
 
 Escalate a level when: unfamiliar code, prod-facing, or being confidently wrong would cost more than the extra process. Never silently de-escalate mid-task.
 
 ## Lifecycle Pipeline
 
 ```
-docs/plans/now/todo.md → /spec (docs/plans/specs/) → /plan → GH issues (gh CLI, link docs/plans/)
+docs/plans/now/todo.md → /spec (docs/plans/specs/) → spec hardening (Plan→Refine→Verify→Fix, see below) → /plan → GH issues (gh CLI, link docs/plans/)
   → /build + ralph-loop (tests/lint/build iterate autonomously)
   → /review → /ship → docs closeout (see below) → check [x] in todo, re-link, remove from now/
 ```
@@ -30,14 +30,28 @@ docs/plans/now/todo.md → /spec (docs/plans/specs/) → /plan → GH issues (gh
 - **Board hygiene:** GH Project statuses mirror branch reality — `gh project item-edit` as part of the step, not later.
 - **CI gate:** after every push, watch ALL triggered runs to green before calling anything done (global CLAUDE.md one-liner).
 
+## Spec Hardening — Plan → Refine → Verify → Fix (before /plan)
+
+Every `docs/plans/now/todo.md` item's primary link is its tracking issue (`- [ ] <task> ([#123](url))`) — add `— [[specs/<slug>]]` the moment a spec exists for that item, but never invent a spec link for an item too small to need one. A spec goes through four stages before the implementation-planning `/plan` phase touches it:
+
+1. **Plan** — `/spec` drafts `docs/plans/specs/<slug>.md` (six areas per `spec-driven-development`: Objective, Commands, Structure, Style, Testing, Boundaries), `status: draft`.
+2. **Refine** — harden the draft with whatever of these three actually applies, skip silently only when genuinely N/A (no comparable precedent, no cross-file footprint):
+   - **`/grill-me`** — interview the draft, resolving its open questions and assumptions one at a time.
+   - **Obsidian MCP / `docs-vault`** — search `./docs` (and `~/docs` for cross-repo/system precedent) for prior ADRs, notes, or handoffs on the same area; cite them instead of re-deciding from scratch.
+   - **`graphify`** (`graphify query`/`explain`/`path`, or `graphify-docs-gaps` for the coverage angle) — ground the spec's Project Structure / Architecture Decisions against what the codebase graph actually shows, not assumption.
+3. **Verify** — a fresh-context adversarial pass over the refined spec, never by whoever drafted or refined it (same "producer never verifies" rule as code review — see Orchestration below). Fable-tier. Checks: all six areas actually covered, not just headers; every refinement citation is real (spot-check one); no contradiction with an existing truth doc or the graph; every open question resolved, not merely restated as still-open.
+4. **Fix** — apply Verify's findings back into the spec directly, `status: active`. A spec with unresolved Verify findings does not reach `/plan` (the technical implementation-plan phase) — Fix is not optional cleanup, it's the gate.
+
+The spec that reaches `/plan` states what each Refine check surfaced (or "none found") and that Verify passed — a spec never checked against existing context, or never adversarially verified, is still a draft, not a plan input.
+
 ## Docs Closeout — Mandatory Last Step
 
 Every task L1+ ends with a docs pass before it counts as done — same gate as CI green. L0 too if it changed behavior/config anyone else relies on. Run the checklist top to bottom:
 
 1. **Changelog, always:** append entry to that repo's `docs/changelog.md` (create if missing; newest first, Keep-a-Changelog style): `## YYYY-MM-DD — <one-line summary>` + type (`Added/Changed/Fixed/Removed`), effort level, wikilinks to touched truth notes/specs, PR/issue refs.
-2. **Repo truth changed** (arch, API, ADR-worthy decision, new skill/script)? → update that repo's `./docs` note(s) + `docs/Home.md` index (`docs-vault` conventions).
+2. **Repo truth changed** (arch, API, ADR-worthy decision, new skill/script)? → update that repo's `./docs` note(s) + `docs/Home.md` index (`docs-vault` conventions), drafted from the spec (`docs/plans/specs/<slug>.md`) plus the actual diff shipped — not a from-memory re-summary. Graph-tracked repo: `graphify-docs-upgrade` Mode 1 promotes the same finding from the graph side.
 3. **System/env fix** (Linux tuning, diag, setup, handoff)? → note in `~/docs` + `~/docs/Home.md` index.
-4. **Plans:** check `[x]` in `docs/plans/now/todo.md`, re-link via wikilink to truth note, remove from `now/`; archive/close spec.
+4. **Plans:** check `[x]` in `docs/plans/now/todo.md`, then delete the line — step 1's changelog entry (wikilinked to the truth note) is the durable record, the todo file is not; set the spec's `status: done` frontmatter — never move or delete `docs/plans/specs/<slug>.md`, inbound wikilinks depend on it staying put.
 5. **Skill learned constraint/edge case?** → self-anneal: update relevant `SKILL.md`.
 
 Changelog entry (step 1) never skipped for L1+. Steps 2–5: if nothing applies, state `docs: no impact` explicitly — silent skip not allowed. Ralph-loop and Workflow runs inherit this gate: final iteration includes docs closeout before reporting done.
@@ -57,7 +71,7 @@ Workflow tool is opt-in; every other delegation lands here — or stays solo, wh
 - **Spawn test — all three, else do it yourself:** (1) separable scope, no shared-file writes; (2) return is a conclusion, not a dump you'd re-read anyway; (3) worth a full context copy — that's what a spawn costs. L0–L1, single read/edit/grep, or a fact you know where to find: never spawn.
 - **Agent picks (type, model):** fan-out search → `Explore` (sonnet) · unknown-shape research → `general-purpose` (opus) · review gate → `code-reviewer` (fable) · tests → `test-engineer` (opus; fable if it gates merge) · security → `security:security-auditor` (fable) · architecture/plan → `Plan` (fable) · needs your exact context → `fork` (inherits your model, override ignored) · trivial lookup/listing → `general-purpose` (haiku, per haiku gate).
 - **Concurrency:** ≤4 concurrent default (L3+ more, user opt-in). Independent spawns go in ONE message — one spawn per turn wastes a turn each. Never two agents writing the same file; parallel edits need `isolation: worktree`.
-- **Prompt contract:** exact scope, exact paths/commands, explicit return shape (`file:line + one-line claim`), and "report conclusions, not file contents". Vague prompt = agent burns a context rediscovering what you already knew.
+- **Prompt contract:** exact scope, exact paths/commands, explicit return shape (`file:line + one-line claim`), and "report conclusions, not file contents". If the work has a spec (`docs/plans/specs/<slug>.md`), pass its path and require the agent read it before acting — never re-describe the spec's contents in the prompt as a substitute for having the agent read it, that's how the two drift. Vague prompt = agent burns a context rediscovering what you already knew.
 - **No nested delegation.** Subagent doesn't spawn subagents; a fork executes directly. Depth multiplies context copies, adds no verifier.
 - **Reuse + reap:** `SendMessage` an idle agent instead of respawning (context already warm); collect/kill background agents when done (`subagent-orchestration`). Never fabricate a pending agent's result — wait for the notification, and treat returned findings as claims to check, not facts.
 - **Producer never verifies:** the agent that found it doesn't confirm it. Fresh-context adversarial verify (fable) or the finding stays unreported.

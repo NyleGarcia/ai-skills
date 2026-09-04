@@ -25,15 +25,16 @@ When entering a Ralph Loop, immediately follow this procedure:
 ### Phase 0: The Grill & Sync (Pre-flight check)
 
 Before writing any code, invoke the `/grill-me` mindset:
-1. Interview the user relentlessly about their plan, completion promise, and test commands. 
+1. Interview the user relentlessly about their plan, completion promise, and test commands.
 2. Break down the work into discrete, atomic tasks and record them as GitHub issues via `gh` CLI.
 3. Sync these issues into `docs/plans/now/todo.md`, ensuring board statuses reflect the new activity.
+4. Any task big enough to need one (multi-file, architectural, ambiguous) gets a real spec — run it through `workflow-standards`' full Spec Hardening sequence (**Plan → Refine → Verify → Fix**) before this loop starts coding it, not improvised mid-loop. A task too small for a spec proceeds on its issue link alone.
 
 ### Phase 1: Setup
 
 1. **Acknowledge the Loop**: Start your first thought process by declaring "Entering Ralph Loop mode."
-2. **Initialize Task Queue**: Read `docs/plans/now/todo.md` to identify the active tasks for this loop.
-3. **Initialize State**: Create or update `docs/plans/now/ralph_progress.md` (or draft logic in `docs/plans/specs/`) to track your iterations and test outputs for the current session.
+2. **Initialize Task Queue**: Read `docs/plans/now/todo.md` to identify the active tasks for this loop. For each task, note whether it links a spec (`— [[specs/<slug>]]`).
+3. **Initialize State**: Create or update `docs/plans/now/ralph_progress.md` to track your iterations and test outputs for the current session.
 
 ### Phase 1.5: Escalation Assessment (Auto-Trigger Check)
 
@@ -73,8 +74,8 @@ Detect the runtime once at Phase 1.5 (check for the `invoke_subagent`/`teamwork_
 
 For each iteration (up to a reasonable limit, default 15 per task):
 
-1. **Fetch Next Task**: Read `docs/plans/now/todo.md`. If all tasks are checked (`[x]`), check if the user has added any new tasks. If the file is fully complete, PROCEED TO PHASE 3. Otherwise, pick the next incomplete `- [ ]` task and mark it as `- [/]` (in progress). Draft implementation details in `docs/plans/specs/`.
-2. **Code**: Make the necessary changes to the codebase to implement the feature or fix the bug.
+1. **Fetch Next Task**: Read `docs/plans/now/todo.md`. If all tasks are checked (`[x]`), check if the user has added any new tasks. If the file is fully complete, PROCEED TO PHASE 3. Otherwise, pick the next incomplete `- [ ]` task and mark it as `- [/]` (in progress). If the task links a spec, **read `docs/plans/specs/<slug>.md` in full before touching code** — it is the implementation source of truth, not the one-line todo item; the todo line is a pointer, not a substitute. Do not improvise a spec inline here — an unspecced task that turns out to need one goes back to Phase 0, it doesn't get a half-spec invented mid-loop.
+2. **Code**: Make the necessary changes to the codebase to implement the feature or fix the bug, following the spec's Boundaries and Success Criteria when one exists.
 3. **Verify**: Run the verification command (e.g., `npm test`, `pytest`, `cargo test`, `uv run pytest`). 
 4. **Analyze**: 
     - If the verification **succeeds** (e.g., exit code 0) and matches the completion promise: Update production truth in `docs/`, check `[x]` in `docs/plans/now/todo.md` (re-linking to `docs/`), update the `gh` project board status, log success in `docs/plans/now/ralph_progress.md`, and REPEAT Phase 2 to pick up the next task.

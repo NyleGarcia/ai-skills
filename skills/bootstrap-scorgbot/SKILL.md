@@ -127,7 +127,21 @@ test:
 	uv run pytest tests/
 ```
 
-## 6. Execution
+## 6. Docs Vault Scaffold
+
+Create the repo docs vault (conventions: `docs-vault` skill) — not just a flat `docs/`:
+```bash
+mkdir -p docs/plans/{now,next,later,specs} docs/decisions
+touch docs/plans/now/todo.md docs/plans/next/backlog.md docs/plans/later/ideas.md
+cp <ai-skills>/skills/docs-vault/scripts/obsidian_frontmatter.py scripts/obsidian_frontmatter.py
+```
+- Write `docs/Home.md` (wikilink index) and `docs/README.md` (plain-link index, GitHub-safe) — both, kept in sync.
+- Write `docs/plans/README.md` as the plans-specific index (same dual-link-per-entry format).
+- Real end users, not just engineers/agents reading the repo? Add `docs/public/` (mkdocs end-user site) and/or `docs/wiki/` (GitHub wiki mirror) as separate tiers — skip both for an internal-only tool.
+- Once truth notes exceed a flat handful, split by topic (`docs/architecture/`, `docs/frontend/`, ...); `docs/audits/` for one-off dated reports, `docs/history/` for origin-story/retired-changelog artifacts — loose reports never sit at the repo root.
+- Run `uv run python scripts/obsidian_frontmatter.py` after writing notes (never hand-write frontmatter) and wire `--check` into CI/pre-commit.
+
+## 7. Execution
 - Initialize `git`: `git init`
 - Instruct the user on adding apps to `apps/` and packages to `packages/`.
 - Ensure everything is tracked.

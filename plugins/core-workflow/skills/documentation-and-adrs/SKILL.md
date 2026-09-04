@@ -24,6 +24,8 @@ Document decisions, not just code. The most valuable documentation captures the 
 
 ADRs capture the reasoning behind significant technical decisions. They're the highest-value documentation you can write.
 
+**In a repo with an Obsidian-compatible `docs/` vault** (see `docs-vault`): store ADRs in `docs/decisions/` but write them with that vault's conventions — kebab-case slug filename, YAML frontmatter (`tags:`), `[[wikilinks]]` to related notes, a `docs/Home.md` line — not the bare `ADR-NNN` sequential-numbering template below. The template stays the fallback for repos without a vault.
+
 ### When to Write an ADR
 
 - Choosing a framework, library, or major dependency
@@ -242,7 +244,7 @@ For shipped features:
 Special consideration for AI agent context:
 
 - **CLAUDE.md / rules files** — Document project conventions so agents follow them
-- **Spec files** — Keep specs updated so agents build the right thing
+- **Spec files** — Keep specs updated so agents build the right thing; once shipped, the spec plus the actual diff is the primary source for updating truth docs, not a from-memory re-summary (see `workflow-standards` Docs Closeout)
 - **ADRs** — Help agents understand why past decisions were made (prevents re-deciding)
 - **Inline gotchas** — Prevent agents from falling into known traps
 

@@ -128,6 +128,24 @@ REFRAMED SUCCESS CRITERIA:
 
 This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
 
+### Phase 1.5: Refine (when the environment provides it)
+
+Before the human review gate, if these are available, use them to pressure-test the draft spec. This phase is optional in a bare environment, but skipping it when the tooling exists throws away free rigor:
+
+- **An interview/grilling skill** (e.g. `/grill-me`) — walk the spec's open questions and assumptions one at a time until each is resolved, not just listed.
+- **A notes/knowledge-vault MCP or skill** (e.g. Obsidian) — search for prior decisions or precedent on the same area; cite what's found instead of re-deciding from scratch.
+- **A codebase knowledge-graph tool** (e.g. `graphify`) — verify the spec's Project Structure and Architecture Decisions sections against what the graph actually shows, not what's assumed.
+
+Record what each check surfaced — or that it found nothing — directly in the spec before moving on.
+
+### Phase 1.6: Verify
+
+A fresh-context adversarial pass over the refined spec — never done by whoever wrote or refined it; same reasoning as never letting an implementer review their own code (`doubt-driven-development`, `code-review-and-quality`). If a reviewer/verifier role is available, use it here. Check: all six core areas actually covered (not just present as empty headers), every claim Phase 1.5 added is real (spot-check at least one citation), no contradiction with existing docs or the codebase, every open question is actually resolved rather than merely re-listed as still open. A spec that fails this check goes back to Phase 1.5, not forward.
+
+### Phase 1.7: Fix
+
+Apply Verify's findings back into the spec directly — this is not deferred cleanup, it's the gate. A spec with open Verify findings does not proceed to Phase 2. Once fixed, the spec states plainly that it was verified and what was corrected.
+
 ### Phase 2: Plan
 
 With the validated spec, generate a technical implementation plan:
@@ -194,6 +212,7 @@ The spec is a living document, not a one-time artifact:
 Before proceeding to implementation, confirm:
 
 - [ ] The spec covers all six core areas
+- [ ] Refinement tools available in this environment were run (or explicitly N/A) before human review
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined

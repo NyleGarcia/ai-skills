@@ -11,6 +11,12 @@ Thin wrapper around the real [Graphify](https://github.com/Graphify-Labs/graphif
 
 Local tree-sitter AST parsing, no vector store, no LLM cost for code-only graphs. Output is regenerable — never commit it.
 
+## Access — don't rely on PATH
+
+`uv tool install` puts the `graphify` binary in `~/.local/bin`, which is often not on PATH inside Claude Code's own shell invocations even after `uv tool update-shell` writes `~/.zshenv` (that file isn't reliably sourced by the tool's non-interactive subshells). **Always invoke it as `"$HOME/.local/bin/graphify"`** in hook commands and scripts — never bare `graphify` — or check `command -v graphify` first if running interactively. This bit us once: the installed `.claude/settings.json` PreToolUse hooks silently no-op'd (`command not found`, exit 127) until fixed to use the absolute path.
+
+Kept current automatically: a `SessionStart` hook in `.claude/settings.json` runs `uv tool upgrade graphifyy` (async, silent, ~0.1s no-op when already current) every session — no manual upgrade needed for the CLI binary itself. This does NOT re-run `graphify install`, so `.claude/skills/graphify/SKILL.md` and the hook commands stay as last configured; bump those manually (see "When NOT to use" below) only for an actual skill-version mismatch.
+
 ## Before the first run, in this order
 
 1. **Both output paths must be gitignored** — `graphify-out/` **and** `docs/knowledge/`. Check, don't assume: a repo may have only the first. The export writes thousands of notes, and any workflow using `git add -A` will otherwise sweep the whole dump into a commit.

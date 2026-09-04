@@ -13,7 +13,6 @@ Master index of all agentic skills loaded in this environment.
 - **`to-prd`**: Turn the current conversation context into a PRD and submit it as a GitHub issue. Use when user wants to create a PRD from the current context.
 
 ## Plan
-- **`planner-architect`**: Workflow for system design, architecture planning, weighing options, creating implementation plans, and managing documentation.
 - **`planning-and-task-breakdown`**: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
 - **`project-management`**: Integrated project management skill. Merges github-planner, github-project, planning-with-files, and sdlc-delivery. Handles epic planning, board syncing, and todo.md tracking.
 - **`to-issues`**: Break a plan, spec, or PRD into independently-grabbable GitHub issues using tracer-bullet vertical slices. Use when user wants to convert a plan into issues, create implementation tickets, or break down work into issues.
@@ -79,7 +78,6 @@ Cloud SQL handles backups, high availability, and secure connectivity for relati
 - **`graphify-docs-gaps`**: Scan the graphify graph for god-nodes/communities with zero `docs/` coverage and produce a ranked gap list, feeding `graphify-docs-upgrade` for drafting. Use when user wants to find missing docs, undocumented code, or a prioritized list of what to document next.
 - **`graphify-docs-upgrade`**: Convert graphify's raw graph output or Obsidian export into curated `docs/` notes, and detect/fix drift in existing `docs/` notes against the current graph. Use when user wants graphify findings promoted into real docs instead of left as raw dump, or wants docs refreshed against code changes.
 - **`obsidian-vault`**: Search, create, and manage notes in the Obsidian vault with wikilinks and index notes. Use when user wants to find, create, or organize notes in Obsidian.
-- **`zoom-out`**: Tell the agent to zoom out and give broader context or a higher-level perspective. Use when you're unfamiliar with a section of code or need to understand how it fits into the bigger picture.
 
 ## Methodologies
 - **`grill-me`**: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".

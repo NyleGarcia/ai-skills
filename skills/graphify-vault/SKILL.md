@@ -1,6 +1,6 @@
 ---
 name: graphify-vault
-description: Build a local knowledge graph of this repo (or any folder/GitHub repo) via the graphify CLI and export it in Obsidian-compatible format into docs/knowledge/. Use when user says "graphify this", "map the codebase", "build a knowledge graph", or wants architecture/relationship queries instead of grepping.
+description: Build a local knowledge graph of this repo (or any folder/GitHub repo) via the graphify CLI and export it in Obsidian-compatible format into docs/knowledge/. Use when user says "graphify this", "map the codebase", "build a knowledge graph", "zoom out", "give me the big picture", "I don't know this codebase", or wants architecture/relationship queries instead of grepping.
 ---
 
 # Graphify Vault (repo wrapper)

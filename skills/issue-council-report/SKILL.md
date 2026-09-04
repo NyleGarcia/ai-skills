@@ -1,3 +1,8 @@
+---
+name: issue-council-report
+description: Write high-quality CIG Issue Council (IC) posts for Star Citizen bugs — gathers local build/log/crash-dump evidence, searches IC for duplicates before filing, and follows a verified UI walkthrough with known gotchas. Use when user says "issue council", "IC report", "file SC bug", "write up this crash", or wants to report a Star Citizen bug to CIG.
+---
+
 # Issue Council Report Writer
 
 Write high-quality CIG Issue Council (IC) posts for Star Citizen bugs, and search IC before filing.

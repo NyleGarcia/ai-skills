@@ -10,6 +10,7 @@ graphify-out/
 docs/knowledge/
 
 # Secrets & Configs
+.mcp.json
 .env
 *.env
 credentials.json

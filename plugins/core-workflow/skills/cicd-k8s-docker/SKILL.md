@@ -7,6 +7,8 @@ description: Standardized workflows for Docker containerization, Kubernetes orch
 
 This skill provides templates and workflows for modern DevOps practices.
 
+**Model:** GH Actions work here runs on `sonnet` (YAML edits, log triage) or `haiku` (watching/checking runs) — never `opus`/`fable`.
+
 ## Docker Containerization
 - **Dockerfile Best Practices**: Multi-stage builds, non-root users, .dockerignore.
 - **Python Example (Multi-stage)**:

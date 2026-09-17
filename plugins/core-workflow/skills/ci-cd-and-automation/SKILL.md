@@ -9,6 +9,8 @@ description: Automates CI/CD pipeline setup. Use when setting up or modifying bu
 
 Automate quality gates so that no change reaches production without passing tests, lint, type checking, and build. CI/CD is the enforcement mechanism for every other skill — it catches what humans and agents miss, and it does so consistently on every single change.
 
+**Model:** GH Actions work under this skill runs on `sonnet` (workflow YAML edits, failure-log triage) or `haiku` (watching/checking runs via `gh run`) — never `opus`/`fable`.
+
 **Shift Left:** Catch problems as early in the pipeline as possible. A bug caught in linting costs minutes; the same bug caught in production costs hours. Move checks upstream — static analysis before tests, tests before staging, staging before production.
 
 **Faster is Safer:** Smaller batches and more frequent releases reduce risk, not increase it. A deployment with 3 changes is easier to debug than one with 30. Frequent releases build confidence in the release process itself.

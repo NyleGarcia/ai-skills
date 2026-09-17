@@ -102,6 +102,7 @@ Rules:
 - **One fable verify pass > several opus passes:** pass-count diversity doesn't close a capability gap on subtle bugs.
 - **Haiku gate — all four or step up to sonnet:** (1) no design choice — the right answer is unique; (2) task is one-shot, no multi-step plan; (3) output is verifiable by inspection or a command; (4) prompt carries the full spec (exact paths, exact format) — haiku won't infer intent from a vague ask.
 - **Never haiku for:** anything that gates merge/deploy, root-cause work, cross-file reasoning, or a prompt you'd have to think about yourself. A retry loop on haiku costs more than sonnet first try.
+- **GitHub Actions override (beats tiers above):** GH Actions workflow skills (`ci-cd-and-automation`, `cicd-k8s-docker`) + CI-run watching/checking → `sonnet` or `haiku` only, never `opus`/`fable`. Watch/status = `haiku`; workflow YAML edits + failure-log triage = `sonnet`.
 - **Ambiguous role?** Classify by blast radius of an unnoticed error: gates something → judgment tier; caught later anyway → production tier.
 - Wiring: Agent tool `model` param; Workflow `agent(prompt, {model: 'fable'|'opus'|'sonnet'|'haiku'})`; ralph roles per Ralph-Loop section above.
 

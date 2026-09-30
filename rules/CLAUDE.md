@@ -40,7 +40,7 @@ Available MCP servers vary by machine/session — check `claude mcp list` (or th
 - **Don't use for:** generating text, multi-step reasoning, exact rules/math/lookups (keep in code), or trivial calls I can judge inline. Each call = paid API request.
 - **In apps:** use TypeSafe SDK (`uv add typesafe`) per `typesafe` skill + live docs (https://docs.typesafe.ai/llms.txt); key server-side only.
 - **In workflows/agents/ralph-loop:** "Micro-judgment" tier in `workflow-standards` Model Selection — prefer `jev` over spawning an agent for pure classify/gate/rank steps (e.g. triage findings, route tasks, dedup, severity rank); low confidence → escalate item to model tier. Never replaces verifiers.
-- **Setup:** server `scripts/typesafe_jev_mcp.py`; key `TYPESAFE_API_KEY` in `~/git/ai-skills/.env` (gitignored).
+- **Setup:** served by the zima MCP gateway at `https://mcp.labs.garcia.systems/servers/jev/mcp/` (LAN/VPN only; source `k8s/mcp/gateway/jev.py` in the zima repo, copied from `scripts/typesafe_jev_mcp.py`); key `TYPESAFE_API_KEY` in 1Password Home Lab → "zima jev TypeSafe API key".
 
 ## 3-Layer Architecture (adapted)
 - **Layer 1: Directive (Instruction)**

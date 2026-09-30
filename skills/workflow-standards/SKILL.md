@@ -93,6 +93,7 @@ Core asymmetry: **a worker's mistake gets caught by the verifier; a verifier's m
 | **Production** | `opus` (`sonnet`) | workers — recoverable output that tests + review will catch | implementation, refactoring, debugging w/ repro, test writing, migration execution |
 | **Mechanical** | `sonnet` (`haiku` if shape is fully specified) | deterministic-ish, low-judgment, still needs some reading comprehension | fan-out search (Explore), boilerplate, refactor-by-pattern, log parsing, schema'd extraction |
 | **Trivial** | `haiku` (`sonnet`) | zero-judgment, one-shot, verifiable at a glance — output is right or obviously wrong | single-fact lookup, file/dir listing, formatting & lint-fix, status/CI/PR checks, git metadata, string/JSON reshaping, yes-no existence checks |
+| **Micro-judgment** | `jev` MCP (no agent) | bounded semantic call over text/state with fixed answer set — needs a probability, not prose | triage/route items (`choice`), dedup/relevance/"is this in scope" gates (`noul`), severity/priority ranking (`score`), confidence-threshold escalation to a model tier |
 
 Rules:
 
@@ -104,6 +105,7 @@ Rules:
 - **Never haiku for:** anything that gates merge/deploy, root-cause work, cross-file reasoning, or a prompt you'd have to think about yourself. A retry loop on haiku costs more than sonnet first try.
 - **GitHub Actions override (beats tiers above):** GH Actions workflow skills (`ci-cd-and-automation`, `cicd-k8s-docker`) + CI-run watching/checking → `sonnet` or `haiku` only, never `opus`/`fable`. Watch/status = `haiku`; workflow YAML edits + failure-log triage = `sonnet`.
 - **Ambiguous role?** Classify by blast radius of an unnoticed error: gates something → judgment tier; caught later anyway → production tier.
+- **Jev before a spawn:** if a step only classifies/gates/ranks N items against fixed criteria, call `jev` tools (`evaluate` batches independent questions in one call) instead of spawning an agent — orchestrator or any worker can call it. Low confidence → escalate that item to the right tier. Never substitute Jev for a verifier or anything that writes, reasons multi-step, or gates merge/deploy. Paid per call; skip for a handful of items you can judge inline. Details: global CLAUDE.md "Jev" section.
 - Wiring: Agent tool `model` param; Workflow `agent(prompt, {model: 'fable'|'opus'|'sonnet'|'haiku'})`; ralph roles per Ralph-Loop section above.
 
 ## Token Efficiency

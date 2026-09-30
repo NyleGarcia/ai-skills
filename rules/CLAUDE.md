@@ -28,6 +28,20 @@ Claude Code auto-discovers everything under `skills/` (root-level) and each `plu
 ### MCP Servers
 Available MCP servers vary by machine/session — check `claude mcp list` (or the connected-servers listing in context) rather than assuming a fixed set here.
 
+### Jev (TypeSafe System One)
+- **What:** small fast model returning typed judgments + calibrated probabilities (no text gen, no reasoning). Tools via `jev` MCP (`evaluate`, `noul`, `choice`, `score`); build-time guidance via `typesafe` skill.
+- **Why:** cheaper/faster/more deterministic than LLM prompt-and-parse; probabilities let code set thresholds and escalate uncertain cases.
+- **Use when** code needs semantic judgment over NL or app state:
+  - Routing/classification (`choice`) — ticket → team, request → handler.
+  - Yes/no gates (`noul`) — urgency, policy violation, duplicate, claim supported by evidence.
+  - Graded ranking (`score`) — relevance rerank, quality/severity/frustration scoring.
+  - Selecting among code-found candidates (extraction without generation); verify-then-escalate cascades.
+  - Batch independent questions over same state in ONE `evaluate` call (parallel).
+- **Don't use for:** generating text, multi-step reasoning, exact rules/math/lookups (keep in code), or trivial calls I can judge inline. Each call = paid API request.
+- **In apps:** use TypeSafe SDK (`uv add typesafe`) per `typesafe` skill + live docs (https://docs.typesafe.ai/llms.txt); key server-side only.
+- **In workflows/agents/ralph-loop:** "Micro-judgment" tier in `workflow-standards` Model Selection — prefer `jev` over spawning an agent for pure classify/gate/rank steps (e.g. triage findings, route tasks, dedup, severity rank); low confidence → escalate item to model tier. Never replaces verifiers.
+- **Setup:** server `scripts/typesafe_jev_mcp.py`; key `TYPESAFE_API_KEY` in `~/git/ai-skills/.env` (gitignored).
+
 ## 3-Layer Architecture (adapted)
 - **Layer 1: Directive (Instruction)**
   - Living SOPs inside `skills/<skill_name>/SKILL.md`.

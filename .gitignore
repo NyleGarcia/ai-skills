@@ -33,3 +33,6 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# claude.ai skill sync cache (machine-generated)
+skills/synced/

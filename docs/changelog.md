@@ -6,6 +6,11 @@ tags: [changelog, meta]
 
 Newest first. One entry per landed task (L1+), Keep-a-Changelog types: Added / Changed / Fixed / Removed.
 
+## 2026-10-12 — antigravity-offload: Gemini/image offload with fallback chain
+
+- **Added** (L1): `antigravity-offload` skill — when to hand work to the zima gateway's `antigravity` (images, `ask`) and `agy-bridge` (`web_lookup`, `adversarial_review`, `delegate`, `follow_up`) servers, prompt shapes, gotchas; `REFERENCE.md` with ops/new-machine setup; `scripts/agy_call.py` (stdlib) that speaks streamable-HTTP MCP to the gateway and falls back to a signed-in local `agy`, exit 3 when neither exists.
+- **Changed** (L1): `rules/CLAUDE.md` — new "Antigravity offload" section beside Jev: use/don't-use rules and the mandatory fallback (gateway → local agy → WebSearch/own review/say images unavailable). `TOOLKIT.md` lists the skill.
+
 ## 2026-09-17 — housekeeping: dead skills archived, portable paths
 
 - **Removed** (L1): 13 dead skills (`agentic-evolution`, `bootstrap-scorgbot`, `docker-optimize`, `edit-article`, `gemini-api`, `issue-council-report`, `migrate-to-shoehorn`, `qa`, `refactor-pure`, `request-refactor-plan`, `scaffold-exercises`, `subagent-orchestration`, `technical-writing`) moved to `skills/.archived/`, plus `agents/README.md` → `agents/.archived/`. Parked out of skill auto-discovery; contents preserved verbatim.

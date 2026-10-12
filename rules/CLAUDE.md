@@ -42,6 +42,13 @@ Available MCP servers vary by machine/session — check `claude mcp list` (or th
 - **In workflows/agents/ralph-loop:** "Micro-judgment" tier in `workflow-standards` Model Selection — prefer `jev` over spawning an agent for pure classify/gate/rank steps (e.g. triage findings, route tasks, dedup, severity rank); low confidence → escalate item to model tier. Never replaces verifiers.
 - **Setup:** served by the zima MCP gateway at `https://mcp.labs.garcia.systems/servers/jev/mcp/` (LAN/VPN only; source `k8s/mcp/gateway/jev.py` in the zima repo, copied from `scripts/typesafe_jev_mcp.py`); key `TYPESAFE_API_KEY` in the 1Password Environment `zima` (mounted at `~/git/zima/.env`).
 
+### Antigravity offload (Gemini on a Google login)
+- **What:** Google's Antigravity agent (Gemini 3.x + Nano Banana images) on the zima MCP gateway, account quota, no API key. Two servers: `antigravity` (`generate_image`, `ask`, `list_models`) and `agy-bridge` (`web_lookup`, `adversarial_review`, `delegate`, `follow_up`, `analyze_files`, `deep_search`). Guidance + helper script via the `antigravity-offload` skill.
+- **Use when:** the user wants an image; a web/doc lookup with sources; a second opinion from a *different* model family on a plan/diff; or bulk grunt work (summarise/extract over big text) that would bloat my context. Each call = full agent run, 25–60 s, ~12k tokens overhead (images ~40k) — worth it for those, not for trivia.
+- **Don't use for:** anything that needs my local files (the agent runs on zima; paste content into the prompt), latency-sensitive steps, or things I can answer inline. Never replaces verifiers/reviewers in `workflow-standards`; `adversarial_review` is an extra opinion, not the gate.
+- **Fallback (mandatory):** gateway tools missing or failing → `python3 ~/.claude/skills/antigravity-offload/scripts/agy_call.py probe` → gateway, else local `agy` (signed in), else degrade: `WebSearch`/`WebFetch` for lookups, review it myself and say so, and for images tell the user plainly it is unavailable here. Never silently skip or fake an image.
+- **Setup:** `https://mcp.labs.garcia.systems/servers/{antigravity,agy-bridge}/mcp/` (LAN/VPN only, bearer `MCP_GATEWAY_API_KEY`); runs in zima ns `mcp` (source `~/git/antigravity-mcp`); re-login after a fresh PVC needs a real TTY. Details in the skill's REFERENCE.md and zima `docs/services.md`.
+
 ## 3-Layer Architecture (adapted)
 - **Layer 1: Directive (Instruction)**
   - Living SOPs inside `skills/<skill_name>/SKILL.md`.

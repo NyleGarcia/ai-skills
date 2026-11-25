@@ -8,7 +8,7 @@ Newest first. One entry per landed task (L1+), Keep-a-Changelog types: Added / C
 
 ## 2026-11-25 — worktree location rule
 
-- **Changed** (L1): `rules/CLAUDE.md` Git section + `core-workflow:git-workflow-and-versioning` — manual worktrees go under `~/git/worktrees/<repo>-<slug>`, never as siblings in `~/git/`.
+- **Changed** (L1): `rules/CLAUDE.md` Git section + `core-workflow:git-workflow-and-versioning` — manual worktrees go under `<repos-root>/worktrees/<repo>-<slug>` (`<repos-root>` = folder holding all git clones, e.g. `~/git`), never as siblings in `<repos-root>`.
 
 ## 2026-10-31 — antigravity-offload: deep research
 

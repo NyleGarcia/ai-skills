@@ -149,20 +149,23 @@ refactor/<short-description>  → refactor/auth-module
 For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
 
 ```bash
-# Create worktrees under ~/git/worktrees/ — never as siblings in ~/git/
-mkdir -p ~/git/worktrees
-git worktree add ~/git/worktrees/project-feature-a feature/task-creation
-git worktree add ~/git/worktrees/project-feature-b feature/user-settings
+# <repos-root> = folder holding all your git clones (e.g. ~/git).
+# Worktrees go in <repos-root>/worktrees/ — never as siblings in <repos-root>.
+# run from the primary clone (inside a worktree this would resolve to .../worktrees)
+REPOS_ROOT="$(dirname "$(git rev-parse --show-toplevel)")"
+mkdir -p "$REPOS_ROOT/worktrees"
+git worktree add "$REPOS_ROOT/worktrees/project-feature-a" feature/task-creation
+git worktree add "$REPOS_ROOT/worktrees/project-feature-b" feature/user-settings
 
 # Each worktree is a separate directory with its own branch
 # Agents can work in parallel without interfering
-ls ~/git/worktrees/
+ls "$REPOS_ROOT/worktrees/"
   project-feature-a/    ← task-creation branch
   project-feature-b/    ← user-settings branch
-# (primary clone stays at ~/git/project on main)
+# (primary clone stays at <repos-root>/project on main)
 
 # When done, merge and clean up
-git worktree remove ~/git/worktrees/project-feature-a
+git worktree remove "$REPOS_ROOT/worktrees/project-feature-a"
 git worktree prune
 ```
 

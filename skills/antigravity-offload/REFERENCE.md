@@ -12,6 +12,15 @@
 
 Memory: ~200 Mi per concurrent agy run on top of each server; `AGY_MAX_CONCURRENCY=2` on the main server, limits 768 Mi per container.
 
+## Deep research internals (antigravity-mcp ≥ 0.2.0)
+
+- **Why async:** a standard run is 5–15 min; `deep_research` starts an `asyncio` task and returns a `job_id`; `research_result` long-polls ≤240 s (gateway `requestTimeout` is 900 s). Jobs live in server memory 24 h — a pod restart loses them.
+- **One research run at a time** (`research_slot`), so it never holds both agy slots; `ask`/images still get the other.
+- **Permissions:** headless agy auto-denies anything needing a prompt, `read_url` included (the agent could search but never open a page). At startup the server merges `read_url(*)` into `/data/.gemini/antigravity-cli/settings.json` → `permissions.allow`. No shell/write rule: the research prompt forbids those, because **one denied call blanks the entire response** (`response: ""`, `denied_actions` lists it). Verified 2026-10-31: flash-medium, 2 sources, 36 s.
+- `read_url(*)` also applies to `ask`, and lets injected pages steer the agent to in-cluster URLs — restrict egress with a NetworkPolicy if that matters. (agy-bridge already runs `--dangerously-skip-permissions` by default, `AGY_SKIP_PERMISSIONS`.)
+- **Depth → knobs:** quick = 2–3 sub-questions, 5 sources, effort medium, 0.5× timeout · standard = 4–6, 10, high, 1× (`AGY_RESEARCH_TIMEOUT_SECONDS`, default 1200) · deep = 6–10, 20, max, 2×. Model: `AGY_RESEARCH_MODEL` → `AGY_DEFAULT_MODEL` → agy default; strongest on this login is `gemini-4-argon-high`.
+- **Helper:** `agy_call.py research` starts + polls (deadline 1 h, exit 2 if still running). Local fallback runs a compact prompt synchronously; needs `read_url(*)` in the local `~/.gemini/antigravity-cli/settings.json` allow-list. Nothing available → Claude's `WebSearch` (extended) or the `deep-research` skill.
+
 ## Protocol the helper speaks
 
 Streamable HTTP, all POST to `.../mcp/` with `Accept: application/json, text/event-stream`:
@@ -48,4 +57,6 @@ The gateway requires `Authorization: Bearer <MCP_GATEWAY_API_KEY>` on every rout
 | `503 Service Temporarily Unavailable` (nginx) | gateway pod restarting (it has OOMKilled at 1536 Mi) | wait, retry |
 | `Please sign in` / `Eligibility check failed` | no token on the volume, or no CA bundle in the image | re-login in a TTY; `ca-certificates` must be installed (`node:slim` lacks it) |
 | `429 ... quota` | account quota | wait; bridge fails over models |
+| `Research run produced no report (denied tools: …)` | agent called a blocked tool, or `read_url` not allowed | rerun; check `permissions.allow` in agy `settings.json` |
+| `Unknown tool: deep_research` | pod still on image < 0.2.0 | bump image tag, rollout |
 | `Error executing tool …` with nothing else | agy died before printing its JSON envelope | check pod logs `-c antigravity-mcp` / `-c agy-bridge` |

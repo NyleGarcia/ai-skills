@@ -15,7 +15,7 @@ Example trigger: `/ralph-loop "Implement the sorting feature" --completion-promi
 
 1. **Iteration > Perfection**: Don't aim for perfect code on the first try. Let the loop refine the work.
 2. **Failures Are Data**: Test failures and linter errors are expected. Use them to debug and self-correct.
-3. **Persistence Wins (The `/goal` mindset)**: Keep trying until success. Function as if the `/goal` command was invoked—be extra thorough, do not end your turn to ask for human help unless you've exhausted all options or hit the iteration limit, and do not stop working until the task is completely finished.
+3. **Persistence Wins (`/goal`)**: Keep trying until success. Under Claude Code, back this with the real `/goal <condition>` command (Phase 1 step 4) so a separate check after every turn — not your own judgment — decides when you're done. Do not end your turn to ask for human help unless you've exhausted all options or hit the iteration limit.
 4. **Follow Project Management Rules**: Tightly integrate with the `docs/plans/now/todo.md` → `docs/plans/specs/` → `docs/` lifecycle and `gh` CLI syncing as defined in the user's project rules.
 
 ## Workflows
@@ -35,6 +35,7 @@ Before writing any code, invoke the `/grill-me` mindset:
 1. **Acknowledge the Loop**: Start your first thought process by declaring "Entering Ralph Loop mode."
 2. **Initialize Task Queue**: Read `docs/plans/now/todo.md` to identify the active tasks for this loop. For each task, note whether it links a spec (`— [[specs/<slug>]]`).
 3. **Initialize State**: Create or update `docs/plans/now/ralph_progress.md` to track your iterations and test outputs for the current session.
+4. **Set the goal (Claude Code)**: turn the completion promise into `/goal <condition>` — per `workflow-standards` "Persistence — `/goal`". `/goal` is user-run: if not already active, ask the user to run it with the exact condition text before iterating.
 
 ### Phase 1.5: Escalation Assessment (Auto-Trigger Check)
 

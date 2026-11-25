@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Claude Code statusline.
 
-Renders: <elapsed> | <model> | <effort> | Ctx:<pct> | $<cost> ($<rate>/hr) | <branch> | <project>
+Renders: <repo subdir> | <elapsed> | <model> | <effort> | Ctx:<pct> | $<cost> ($<rate>/hr) | <branch>
 
 Wire up in ~/.claude/settings.json:
     "statusLine": {"type": "command", "command": "/home/Zedwil/git/ai-skills/scripts/statusline.py"}
@@ -115,6 +115,23 @@ def git_branch(cwd):
     return name
 
 
+def location_label(cwd, project):
+    """'repo sub/dir' from git toplevel of cwd; fallback: project dir basename."""
+    try:
+        out = subprocess.run(
+            ["git", "-C", cwd, "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, timeout=1,
+        )
+        top = out.stdout.strip() if out.returncode == 0 else ""
+    except (OSError, subprocess.SubprocessError):
+        top = ""
+    if not top:
+        return os.path.basename(project.rstrip("/")) or project
+    sub = os.path.relpath(cwd, top)
+    name = os.path.basename(top)
+    return name if sub == "." else f"{name} {sub}"
+
+
 def context_pct(data, transcript_tokens):
     """Prefer the harness-reported usage; fall back to transcript math."""
     pct = dig(data, "context_window", "used_percentage")
@@ -155,7 +172,7 @@ def main():
     dur_ms = dig(data, "cost", "total_duration_ms") or span_ms
     cost = dig(data, "cost", "total_cost_usd", default=0.0) or 0.0
 
-    parts = []
+    parts = [f"{PROJ}\033[1m{location_label(cwd, project)}{R}"]
 
     elapsed = fmt_elapsed(dur_ms)
     if elapsed:
@@ -180,8 +197,6 @@ def main():
     branch = git_branch(cwd)
     if branch:
         parts.append(f"{BRANCH}{branch}{R}")
-
-    parts.append(f"{PROJ}{os.path.basename(project.rstrip('/')) or project}{R}")
 
     sys.stdout.write(f" {SEP} ".join(parts))
 

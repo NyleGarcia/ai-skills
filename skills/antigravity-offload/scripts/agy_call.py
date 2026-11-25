@@ -4,6 +4,7 @@
     agy_call.py probe
     agy_call.py ask "prompt" [--model SLUG] [--effort low|medium|high|xhigh|max]
     agy_call.py image "prompt" [--aspect 1:1|16:9|9:16|4:3|3:4] [--out FILE]
+    agy_call.py research "question" [--context TEXT] [--depth quick|standard|deep] [--model SLUG] [--out FILE]
     agy_call.py tool <server> <tool> '<json args>'      # e.g. tool agy-bridge web_lookup '{"query":"..."}'
 
 Fallback chain: gateway (LAN/VPN, bearer key) -> local agy (signed in) -> exit 3.
@@ -22,6 +23,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -30,6 +32,16 @@ GATEWAY = os.environ.get("ANTIGRAVITY_GATEWAY", "https://mcp.labs.garcia.systems
 HEADERS = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
 AGY_HOME = Path(os.environ.get("HOME", "/tmp")) / ".gemini" / "antigravity-cli"
 IMAGE_EXT = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+RESEARCH_DEADLINE = 3600  # seconds of polling before giving up on a research job
+# Local fallback only; the server owns the full research prompt. Needs read_url(*) in the local
+# ~/.gemini/antigravity-cli/settings.json permissions.allow, or agy can search but not read pages.
+LOCAL_RESEARCH = (
+    "Deep research task. Use ONLY web search and reading URLs; never run commands or edit files "
+    "(blocked: calling one aborts the answer). Split the question into sub-questions, read "
+    "authoritative sources, cross-check key claims across two sources, flag disagreements. Reply "
+    "in Markdown: ## Answer, ## Findings (claims cited [n]), ## Disagreements and uncertainty, "
+    "## Open questions, ## Sources ([n] Title - URL).\n{context}Question: {question}"
+)
 
 
 # ---------- gateway ----------
@@ -159,6 +171,48 @@ def run(server: str, tool: str, args: dict, prompt: str | None, model: str | Non
     return 3
 
 
+def _text(result: dict) -> str:
+    return "\n".join(c.get("text", "") for c in result.get("content", []) if c.get("type") == "text")
+
+
+def research(question: str, context: str | None, depth: str, model: str | None, out: str | None) -> int:
+    """Start a deep_research job on the gateway and poll research_result until it finishes."""
+    args = {"question": question, "depth": depth, **({"context": context} if context else {}),
+            **({"model": model} if model else {})}
+    try:
+        started = gateway_call("antigravity", "deep_research", args, timeout=120)
+        if started.get("isError"):
+            return emit(started, None)
+        job = _text(started).splitlines()[0].removeprefix("job_id: ").strip()
+        print(f"[research job {job} ({depth}) started; polling]", file=sys.stderr)
+        deadline = time.time() + RESEARCH_DEADLINE
+        while time.time() < deadline:
+            result = gateway_call("antigravity", "research_result", {"job_id": job, "wait_seconds": 240}, timeout=300)
+            text = _text(result)
+            if result.get("isError") or not text.startswith(f"job_id: {job}\nstatus: running"):
+                if out and not result.get("isError"):
+                    Path(out).write_text(text + "\n")
+                    print(f"[report saved] {out}")
+                    return 0
+                return emit(result, None)
+            print(f"[{text.splitlines()[-1].removeprefix('status: ')}]", file=sys.stderr)
+        print(f"[research job {job} still running after {RESEARCH_DEADLINE}s; poll research_result later]", file=sys.stderr)
+        return 2
+    except http.client.HTTPException as e:
+        print(f"[gateway call broke mid-stream: {e!r}; check pod logs]", file=sys.stderr)
+        return 2
+    except (urllib.error.URLError, urllib.error.HTTPError, RuntimeError, TimeoutError, OSError) as e:
+        print(f"[gateway unavailable: {e}]", file=sys.stderr)
+    prompt = LOCAL_RESEARCH.format(context=f"Background: {context}\n" if context else "", question=question)
+    try:
+        print("[falling back to local agy research (needs read_url(*) allowed locally)]", file=sys.stderr)
+        return emit(local_call(prompt, model, False, timeout=1800), out)
+    except (RuntimeError, subprocess.TimeoutExpired) as e:
+        print(f"[local agy unavailable: {e}]", file=sys.stderr)
+    print("[nothing available: use WebSearch (extended) / the deep-research skill instead]", file=sys.stderr)
+    return 3
+
+
 def probe() -> int:
     status = {"gateway": None, "local_agy": None}
     try:
@@ -178,6 +232,8 @@ def main() -> int:
     sub.add_parser("probe")
     a = sub.add_parser("ask"); a.add_argument("prompt"); a.add_argument("--model"); a.add_argument("--effort")
     i = sub.add_parser("image"); i.add_argument("prompt"); i.add_argument("--aspect", default="1:1"); i.add_argument("--out")
+    r = sub.add_parser("research"); r.add_argument("question"); r.add_argument("--context"); r.add_argument("--model"); r.add_argument("--out")
+    r.add_argument("--depth", default="standard", choices=["quick", "standard", "deep"])
     t = sub.add_parser("tool"); t.add_argument("server"); t.add_argument("tool"); t.add_argument("args", nargs="?", default="{}"); t.add_argument("--out")
     ns = ap.parse_args()
     if ns.cmd == "probe":
@@ -185,6 +241,8 @@ def main() -> int:
     if ns.cmd == "ask":
         args = {"prompt": ns.prompt, **({"model": ns.model} if ns.model else {}), **({"effort": ns.effort} if ns.effort else {})}
         return run("antigravity", "ask", args, ns.prompt, ns.model, False, None)
+    if ns.cmd == "research":
+        return research(ns.question, ns.context, ns.depth, ns.model, ns.out)
     if ns.cmd == "image":
         return run("antigravity", "generate_image", {"prompt": ns.prompt, "aspect_ratio": ns.aspect},
                    f"Generate one image, aspect ratio {ns.aspect}: {ns.prompt}", None, True, ns.out)

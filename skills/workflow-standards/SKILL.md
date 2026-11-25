@@ -64,6 +64,11 @@ Default execution engine for L3+: autonomous code→verify→docs loop on `docs/
 
 On trigger → four-role pipeline via native Agent tool: **Explorer** (`Explore`, sonnet) → **Worker** (self or opus, local ralph-loop) → **Reviewer** (`code-reviewer`, fable) → **Auditor** (`test-engineer`, fable). Same fix failing 3× in a row = stop, log blockage, change approach radically.
 
+**Persistence — `/goal` (Claude Code built-in):** `/goal <condition>` makes a separate check judge the condition after every turn; Claude keeps working until met. `/goal clear` ends it. Use for L3+ autonomous runs — ralph-loop, multi-turn Workflow/Agent orchestration — so "done" is decided by the check, not by the worker stopping early.
+- **Condition = verifiable end state**, mirroring the pipeline gates: e.g. `tests + lint + build green, CI green on HEAD, docs closeout done (changelog entry + todo line removed)`. Never vague ("feature works") — an unverifiable goal loops forever or passes wrongly.
+- **User-run:** Claude can't invoke slash commands — propose the exact `/goal ...` text and ask the user to run it before looping. Skip for L0–L2 (one-session tasks don't need it).
+- **Limits:** only in trusted workspaces, and fails if hooks restricted (`disableAllHooks` / `allowManagedHooksOnly`). Goal pauses on API errors / hook-ended turns — a message resumes it. Still respect the 3× same-fix stop rule: on a blockage, report and let the user `/goal clear` rather than thrashing.
+
 ## Orchestration — Agent Tool (default path)
 
 Workflow tool is opt-in; every other delegation lands here — or stays solo, which is the cheapest correct path.
@@ -82,6 +87,7 @@ Workflow tool is opt-in; every other delegation lands here — or stays solo, wh
 2. **Size:** <15 agents default. `pipeline()` over flat `parallel()` — verify findings as each review lands; overlap saves wall-clock.
 3. **Verify everything:** every finding gets an adversarial verify agent. Unverified findings are noise; one good verify pass beats three redundant review passes.
 4. **Model roles:** Model Selection Doctrine below. Same spawn test and prompt contract as Agent tool apply per-agent.
+5. **Long runs:** if orchestration spans multiple turns (fix → re-verify rounds), pair it with `/goal` (see Persistence above) so the session doesn't stop between rounds.
 
 ## Model Selection Doctrine
 
